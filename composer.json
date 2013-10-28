@@ -6,14 +6,15 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Cekurte Sistemas",
+            "name": "João Paulo Cercal",
             "email": "sistemas@cekurte.com",
             "homepage": "http://sistemas.cekurte.com/"
         }
     ],
-    "require": {
+    "require-dev": {
         "phpoffice/phpexcel": "dev-master"
     },
+    "minimum-stability": "dev",
     "target-dir": "src",
     "autoload": {
         "psr-0": {
