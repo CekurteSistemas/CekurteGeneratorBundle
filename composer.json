@@ -17,7 +17,7 @@
     "target-dir": "src",
     "autoload": {
         "psr-0": {
-            "Cekurte\\GeneratorBundle\\": ""
+            "Cekurte\\GeneratorBundle\\": "src/"
         }
     }
 }
