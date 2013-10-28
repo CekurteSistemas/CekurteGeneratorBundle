@@ -10,10 +10,9 @@
             "homepage": "http://sistemas.cekurte.com/"
         }
     ],
-    "require-dev": {
+    "require": {
         "phpoffice/phpexcel": "1.7.9"
     },
-    "minimum-stability": "dev",
     "target-dir": "src",
     "autoload": {
         "psr-0": { "Cekurte\\GeneratorBundle\\": "src/" }
