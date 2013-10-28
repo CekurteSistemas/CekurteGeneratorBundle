@@ -3,7 +3,6 @@
     "description": "This bundle generates code for you",
     "keywords": ["generator"],
     "type": "symfony-bundle",
-    "license": "MIT",
     "authors": [
         {
             "name": "João Paulo Cercal",
@@ -17,8 +16,11 @@
     "minimum-stability": "dev",
     "target-dir": "src",
     "autoload": {
-        "psr-0": {
-            "Cekurte\\GeneratorBundle\\": "src/"
+        "psr-0": { "Cekurte\\GeneratorBundle\\": "src/" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
         }
     }
 }
