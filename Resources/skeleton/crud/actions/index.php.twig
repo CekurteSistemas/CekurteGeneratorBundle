@@ -1,0 +1,57 @@
+
+    /**
+{% block phpdoc_method_header %}
+     * Lists all {{ entity }} entities.
+{% endblock phpdoc_method_header %}
+     *
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}
+     * @Route("/", name="{{ route_name_prefix }}")
+     * @Route("/page/{page}/sort/{sort}/direction/{direction}/", defaults={"page"=1, "sort"="ck.id", "direction"="asc"}, name="{{ route_name_prefix }}_paginator")
+     * @Method("GET")
+     * @Template()
+     * @Secure(roles="ROLE_{{ bundle | upper }}_{{ entity | upper }}, ROLE_ADMIN")
+{% endif %}
+{% endblock phpdoc_method_annotations %}
+     *
+     * @param int $page
+     * @return array
+{% include 'crud/actions/author.php.twig' %}
+     */
+{% block method_definition %}
+    public function indexAction($page = 1)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        $form = $this->createForm(new {{ entity }}FormType(), new {{ entity }}(), array(
+            'search' => true,
+        ));
+
+        if ($this->getSession()->has('search_{{ entity | lower }}')) {
+
+            $form->bind($this->getSession()->get('search_{{ entity | lower }}'));
+        }
+
+        $query = $this->getEntityRepository()->getQuery($form->getData());
+
+        $pagination = $this->getPagination($query, $page);
+
+        $pagination->setUsedRoute('{{ entity | lower }}_paginator');
+{% endblock method_body %}
+
+{% block method_return %}
+{% if 'annotation' == format %}
+        return array(
+            'pagination'    => $pagination,
+            'delete_form'   => $this->createDeleteForm()->createView(),
+            'search_form'   => $form->createView(),
+        );
+{% else %}
+        return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:index.html.twig', array(
+            'pagination'    => $pagination,
+            'delete_form'   => $this->createDeleteForm()->createView(),
+            'search_form'   => $form->createView(),
+        ));
+{% endif %}
+{% endblock method_return %}
+    }

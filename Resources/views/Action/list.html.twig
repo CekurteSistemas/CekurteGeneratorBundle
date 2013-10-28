@@ -1,0 +1,9 @@
+{% if cekurte_is_granted('LIST') %}
+    {% block container_open %}{% endblock %}
+        {% block action %}
+            <a href="{{ path(route) }}" class="btn btn-default">
+                {% block action_icon %}<span class="glyphicon glyphicon-list"></span>{% endblock %} {{ 'Listar' | trans }}
+            </a>
+        {% endblock %}
+    {% block container_close %}{% endblock %}
+{% endif %}

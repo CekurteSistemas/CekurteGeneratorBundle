@@ -1,0 +1,17 @@
+{% extends 'CekurteGeneratorBundle::modal.html.twig' %}
+
+{% block container_open %}<div id="modalDelete" class="modal fade">{% endblock %}
+
+{% block title %}{{ 'Remover' | trans }}{% endblock %}
+
+{% block form_open %}{% endblock %}
+{% block form_close %}{% endblock %}
+
+{% block content %}
+    {{ 'Você tem certeza que deseja remover este registro?' | trans }}
+{% endblock %}
+
+{% block actions %}
+    <a class="btn btn-default" data-dismiss="modal" aria-hidden="true">{{ 'Não' | trans }}</a>
+    <a class="btn btn-danger confirm_delete">{{ 'Sim, Quero Remover!' | trans }}</a>
+{% endblock %}

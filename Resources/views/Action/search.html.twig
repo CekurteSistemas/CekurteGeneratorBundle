@@ -1,0 +1,9 @@
+{% if cekurte_is_granted('LIST') %}
+    {% block container_open %}{% endblock %}
+        {% block action %}
+            <a href="#modalSearch" class="btn btn-default" data-toggle="modal">
+                {% block action_icon %}<span class="glyphicon glyphicon-search"></span>{% endblock %} {{ 'Pesquisar' | trans }}
+            </a>
+        {% endblock %}
+    {% block container_close %}{% endblock %}
+{% endif %}

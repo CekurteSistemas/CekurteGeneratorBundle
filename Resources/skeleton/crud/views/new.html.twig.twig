@@ -1,0 +1,22 @@
+{% block extends %}
+{{ "{% extends 'CekurteGeneratorBundle::layout.html.twig' %}" }}
+{% endblock extends %}
+
+{% block body %}
+{{ "{% set title    = '" ~ entity ~ "'|trans %}" }}
+{{ "{% set subtitle = '" ~ 'Adicionar' ~ "'|trans %}" }}
+
+{{ "{% block links -%}" }}
+    {{ "{% embed 'CekurteGeneratorBundle:Action:list.html.twig' with {
+        'route' : '" ~ route_name_prefix ~ "'
+    } only %}
+    {% endembed %}" }}
+{{ "{% endblock %}" }}
+
+{{ "{% block content -%}" }}
+    <form class="form-horizontal" role="form" action="{{ "{{ path('" ~ route_name_prefix ~ "_create') }}" }}" method="post" {{ "{{ form_enctype(form) }}" }}>
+        {{ "{{ form_widget(form) }}" }}
+        {{ "{% include 'CekurteGeneratorBundle:Action:form-actions.html.twig' %}" }}
+    </form>
+{{ "{% endblock %}" }}
+{% endblock body %}

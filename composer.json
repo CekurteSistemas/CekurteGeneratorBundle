@@ -1,0 +1,23 @@
+{
+    "name": "cekurte/generatorbundle",
+    "description": "This bundle generates code for you",
+    "keywords": ["generator"],
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Cekurte Sistemas",
+            "email": "sistemas@cekurte.com",
+            "homepage": "http://sistemas.cekurte.com/"
+        }
+    ],
+    "require": {
+        "phpoffice/phpexcel": "dev-master"
+    },
+    "target-dir": "src",
+    "autoload": {
+        "psr-0": {
+            "Cekurte\\GeneratorBundle\\": ""
+        }
+    }
+}

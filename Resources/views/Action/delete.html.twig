@@ -1,0 +1,23 @@
+{% if cekurte_is_granted('DELETE') %}
+    {% block search -%}
+        {% include 'CekurteGeneratorBundle:Action:delete-modal.html.twig' %}
+    {% endblock %}
+    {% block container_open %}{% endblock %}
+        {% block form_open %}<form class="form-delete-inline{% if (show_label is defined) and (show_label == true) %} {{ 'form-delete' | trans }}{% endif %}" action="{{ path(route, { 'id': id }) }}" method="post">{% endblock %}
+            {% block method %}
+                <input type="hidden" name="_method" value="DELETE" />
+            {% endblock %}
+            {% block id %}
+                <input type="hidden" name="id" value="{{ id }}" />
+            {% endblock %}
+            {% block token %}
+                {{ form_row(form._token) }}
+            {% endblock %}
+            {% block action %}
+                <button type="submit" class="btn btn-danger" title="{% if (show_label is not defined) %}{{ 'Remover' | trans }}{% endif %}" data-target="#modalDelete" data-toggle="modal">
+                    {% block action_icon %}<span class="glyphicon glyphicon-remove"></span>{% endblock %} {% if (show_label is defined) and (show_label == true) %}{{ 'Remover' | trans }}{% endif %}
+                </button>
+            {% endblock %}
+        {% block form_close %}</form>{% endblock %}
+    {% block container_close %}{% endblock %}
+{% endif %}

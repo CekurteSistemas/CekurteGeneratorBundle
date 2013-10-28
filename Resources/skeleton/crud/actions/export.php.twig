@@ -1,0 +1,51 @@
+
+    /**
+{% block phpdoc_method_header %}
+     * Export {{ entity }} entities to Excel.
+{% endblock phpdoc_method_header %}
+     *
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}
+     * @Route("/export", name="{{ route_name_prefix }}_export")
+     * @Method("GET")
+     * @Template()
+     * @Secure(roles="ROLE_{{ bundle | upper }}_{{ entity | upper }}, ROLE_ADMIN")
+{% endif %}
+{% endblock phpdoc_method_annotations %}
+     *
+     * @return StreamedResponse
+{% include 'crud/actions/author.php.twig' %}
+     */
+{% block method_definition %}
+    public function exportAction()
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        $form = $this->createForm(new {{ entity }}FormType(), new {{ entity }}(), array(
+            'search' => true,
+        ));
+
+        if ($this->getSession()->has('search_{{ entity | lower }}')) {
+
+            $form->bind($this->getSession()->get('search_{{ entity | lower }}'));
+        }
+
+        $query = $this->getEntityRepository()->getQuery($form->getData());
+
+        $office = new CekurtePHPExcel('Relatório de {{ entity }}s');
+
+        $office
+            ->setHeader(array(
+            {% for field in fields %}
+    '{{ field.fieldName }}' => '{{ field.fieldName }}',
+            {% endfor -%}
+        ))
+            ->setData($query->getArrayResult())
+            ->build()
+        ;
+{% endblock method_body %}
+
+{% block method_return %}
+        return $office->createResponse();
+{% endblock method_return %}
+    }

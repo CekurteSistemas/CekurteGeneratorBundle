@@ -1,0 +1,98 @@
+{% block extends %}
+{{ "{% extends 'CekurteGeneratorBundle::layout.html.twig' %}" }}
+{% endblock extends %}
+
+{% block body %}
+{{ "{% set title    = '" ~ entity ~ "'|trans %}" }}
+{{ "{% set subtitle = '" ~ 'Listar' ~ "'|trans %}" }}
+
+{{ "{% block search -%}" }}
+    {{ "{% include '" ~ bundle ~ ":" ~ entity ~ ":search.html.twig' %}" }}
+{{ "{% endblock %}" }}
+
+{{ "{% block links -%}" }}
+    {{ "{% embed 'CekurteGeneratorBundle:Action:search.html.twig' only %}
+    {% endembed %}" }}
+    {{ "{% embed 'CekurteGeneratorBundle:Action:create.html.twig' with {
+        'route': '" ~ route_name_prefix ~ "_new'
+    } only %}
+    {% endembed %}" }}
+    {{ "{% embed 'CekurteGeneratorBundle:Action:export.html.twig' with {
+        'route': '" ~ route_name_prefix ~ "_export'
+    } only %}
+    {% endembed %}" }}
+{{ "{% endblock %}" }}
+
+{{ "{% block links_footer -%}" }}
+    {{ "{{ knp_pagination_render(pagination) }}" }}
+{{ "{% endblock %}" }}
+
+
+{{ "{% block content -%}" }}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                {%- for field, metadata in fields %}
+
+                    <th{{ "{% if pagination.isSorted('ck." ~ field ~ "') %}" }} class="sorted"{{ "{% endif %}" }}>{{ "{{ knp_pagination_sortable(pagination, '" ~ field|capitalize ~ "', 'ck." ~ field ~ "', {'title' : 'Ordernar por'|trans" ~ " ~ ' ' ~ '" ~ field|capitalize ~ "'}) }}" }}</th>
+
+                {%- endfor %}
+
+                    {{ "{% if cekurte_is_granted('RETRIEVE') or cekurte_is_granted('UPDATE') or cekurte_is_granted('DELETE') %}" }}
+                        <th class="action">{{ "{{ 'Ações'|trans }}" }}</th>
+                    {{ "{% endif %}" }}
+                </tr>
+            </thead>
+            <tbody>
+            {{ '{% for entity in pagination %}' }}
+                <tr>
+
+            {%- for field, metadata in fields %}
+                {%- if loop.first and ('show' in actions) %}
+
+                    <td><a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity.id }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></td>
+
+                {%- elseif metadata.type in ['date', 'datetime'] %}
+
+                    <td>{{ '{% if entity.' ~ field|replace({'_': ''}) ~ ' %}{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d H:i:s\') }}{% endif %}' }}</td>
+
+                {%- else %}
+
+                    <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</td>
+
+                {%- endif %}
+
+                {%- if loop.last %}
+
+                    {{ "{% if cekurte_is_granted('RETRIEVE') or cekurte_is_granted('UPDATE') or cekurte_is_granted('DELETE') %}" }}
+                        <td>
+                            {{ "{% embed 'CekurteGeneratorBundle:Action:retrieve.html.twig' with {
+                                'id'    : entity.id,
+                                'route' : '" ~ route_name_prefix ~ "_show'
+                            } only %}
+                            {% endembed  %}" }}
+                            {{ "{% embed 'CekurteGeneratorBundle:Action:update.html.twig' with {
+                                'id'    : entity.id,
+                                'route' : '" ~ route_name_prefix ~ "_edit'
+                            } only %}
+                            {% endembed  %}" }}
+                            {{ "{% embed 'CekurteGeneratorBundle:Action:delete.html.twig' with {
+                                'form'  : delete_form,
+                                'id'    : entity.id,
+                                'route' : '" ~ route_name_prefix ~ "_delete'
+                            } only %}
+                            {% endembed  %}" }}
+                        </td>
+                    {{ "{% endif %}" }}
+
+                {%- endif %}
+            {%- endfor %}
+
+                </tr>
+            {{ '{% endfor %}' }}
+            </tbody>
+        </table>
+    </div>
+{{ "{% endblock %}" }}
+{% endblock body %}

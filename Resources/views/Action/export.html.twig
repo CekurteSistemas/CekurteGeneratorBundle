@@ -1,0 +1,9 @@
+{% if cekurte_is_granted('LIST') %}
+    {% block container_open %}{% endblock %}
+        {% block action %}
+            <a href="{{ path(route) }}" class="btn btn-default">
+                {% block action_icon %}<span class="glyphicon glyphicon-save"></span>{% endblock %} {{ 'Exportar' | trans }}
+            </a>
+        {% endblock %}
+    {% block container_close %}{% endblock %}
+{% endif %}

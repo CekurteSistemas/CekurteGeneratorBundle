@@ -1,0 +1,48 @@
+h1.navbar-brand {
+  margin: 0px;
+}
+
+.page-header {
+  margin-top: 80px;
+}
+
+.page-header h2 {
+  font-size: 28px;
+  line-height: 40px;
+  margin: 0px;
+}
+
+ul.pagination {
+  margin: 0px;
+}
+
+footer {
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  padding-top: 25px;
+}
+
+table th.action {
+    width: 144px;
+}
+
+table.table-show tr th {
+    width: 30%;
+}
+
+.form-delete-inline {
+    display: inline-block;
+}
+
+.form-delete button {
+    -webkit-border-top-left-radius: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    -moz-border-radius-topleft: 0px;
+    -moz-border-radius-bottomleft: 0px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+a:hover {
+    text-decoration: none;
+}

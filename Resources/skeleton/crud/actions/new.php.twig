@@ -1,0 +1,38 @@
+
+    /**
+{% block phpdoc_method_header %}
+     * Displays a form to create a new {{ entity }} entity.
+{% endblock phpdoc_method_header %}
+     *
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}
+     * @Route("/new", name="{{ route_name_prefix }}_new")
+     * @Method("GET")
+     * @Template()
+     * @Secure(roles="ROLE_{{ bundle | upper }}_{{ entity | upper }}_CREATE, ROLE_ADMIN")
+{% endif %}
+{% endblock phpdoc_method_annotations %}
+     *
+     * @return array|Response
+{% include 'crud/actions/author.php.twig' %}
+     */
+{% block method_definition %}
+    public function newAction()
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        $form = $this->createForm(new {{ entity }}FormType(), new {{ entity }}());
+{% endblock method_body %}
+
+{% block method_return %}
+{% if 'annotation' == format %}
+        return array(
+            'form' => $form->createView(),
+        );
+{% else %}
+        return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:new.html.twig', array(
+            'form' => $form->createView(),
+        ));
+{% endif %}
+{% endblock method_return %}
+    }

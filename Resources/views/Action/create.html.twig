@@ -1,0 +1,9 @@
+{% if cekurte_is_granted('CREATE') %}
+    {% block container_open %}{% endblock %}
+        {% block action %}
+            <a href="{{ path(route) }}" class="btn btn-success">
+                {% block action_icon %}<span class="glyphicon glyphicon-plus"></span>{% endblock %} {{ 'Adicionar' | trans }}
+            </a>
+        {% endblock %}
+    {% block container_close %}{% endblock %}
+{% endif %}

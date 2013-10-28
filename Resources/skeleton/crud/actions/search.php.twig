@@ -1,0 +1,35 @@
+
+    /**
+{% block phpdoc_method_header %}
+     * Displays a form to search a {{ entity }} entity.
+{% endblock phpdoc_method_header %}
+     *
+{% block phpdoc_method_annotations %}
+{% if 'annotation' == format %}
+     * @Route("/search", name="{{ route_name_prefix }}_search")
+     * @Method({"GET", "POST"})
+     * @Template()
+     * @Secure(roles="ROLE_{{ bundle | upper }}_{{ entity | upper }}, ROLE_ADMIN")
+{% endif %}
+{% endblock phpdoc_method_annotations %}
+     *
+     * @param Request $request
+     * @return RedirectResponse
+{% include 'crud/actions/author.php.twig' %}
+     */
+{% block method_definition %}
+    public function searchAction(Request $request)
+{% endblock method_definition %}
+    {
+{% block method_body %}
+        if ('POST' === $request->getMethod()) {
+            $this->getSession()->set('search_{{ entity | lower }}', $request);
+        } else {
+            $this->getSession()->remove('search_{{ entity | lower }}');
+        }
+{% endblock method_body %}
+
+{% block method_return %}
+        return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
+{% endblock method_return %}
+    }

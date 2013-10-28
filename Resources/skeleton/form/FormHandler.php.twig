@@ -1,0 +1,22 @@
+<?php
+
+namespace {{ namespace }}\Form{{ entity_namespace ? '\\' ~ entity_namespace : '' }}\Handler;
+
+{% block use_statements %}
+use Cekurte\GeneratorBundle\Form\Handler\CekurteFormHandler;
+{% endblock use_statements %}
+
+/**
+ * {{ entity_class }} handler.
+ *
+ * @author João Paulo Cercal <sistemas@cekurte.com>
+ * @version 0.1
+ */
+{% block class_definition %}
+class {{ form_class }} extends CekurteFormHandler
+{% endblock class_definition %}
+{
+{% block class_body %}
+
+{% endblock class_body %}
+}
