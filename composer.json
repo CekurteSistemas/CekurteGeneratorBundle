@@ -13,10 +13,11 @@
     "require": {
         "phpoffice/phpexcel": "1.7.9"
     },
-    "target-dir": "src",
     "autoload": {
-        "psr-0": { "Cekurte\\GeneratorBundle\\": "src/" }
+        "psr-0": { "Cekurte\\GeneratorBundle": "" }
     },
+    "target-dir": "Cekurte/GeneratorBundle",
+
     "extra": {
         "branch-alias": {
             "dev-master": "1.0.x-dev"
