@@ -1,151 +1,161 @@
-<!DOCTYPE html>
+{% block html_doctype %}<!DOCTYPE html>{% endblock %}
 {% block html_open_tag %}<html>{% endblock %}
-    <head>
-        <meta charset="UTF-8" />
+{% block head_open_tag %}<head>{% endblock %}
 
-        {% block meta %}{% endblock %}
+    {%- block meta %}
 
-        <title>{% if (subtitle is defined) %}{{ subtitle | trans }}{% endif %} - {% block title %}{{ title }} - {{ 'Cekurte Sistemas' | trans }}{% endblock %}</title>
+    <meta charset="UTF-8" />
+    {%- endblock %}
 
-        {% block stylesheets %}
-            {% stylesheets
-                'vendor/bootstrap/dist/css/bootstrap.min.css'
-                filter='cssrewrite'
-            %}
-                <link rel="stylesheet" type="text/css" href="{{ asset_url }}" />
-            {% endstylesheets %}
-            {% stylesheets
-                'bundles/cekurtegenerator/css/style.css'
-                filter='cssrewrite,?yui_css'
-            %}
-                <link rel="stylesheet" type="text/css" href="{{ asset_url }}" />
-            {% endstylesheets %}
-        {% endblock %}
+    <title>
+        {%- block title -%}
+            {%- if (title is defined) %}{{ title | trans }} {% block title_separator -%} - {%- endblock %} {% endif -%}
+            {%- if (subtitle is defined) %}{{ subtitle | trans }}{% endif -%}
+        {%- endblock -%}
+    </title>
 
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    {%- block stylesheets %}
 
-        <!--[if lt IE 9]>
-            <script type="text/javascript" src="vendor/html5shiv/dist/html5shiv.js"></script>
-            <script type="text/javascript" src="vendor/respond/respond.min.js"></script>
-        <![endif]-->
-    </head>
-    <body>
-        {% block body %}
-            <header class="navbar navbar-inverse navbar-fixed-top">
-                {% block header %}
-                    <div class="container">
-                        <div class="navbar-header">
-                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
-                            <h1 class="navbar-brand" href="#">{{ 'Quanta Fome' | trans }}</h1>
-                        </div>
-                        <nav class="navbar-collapse collapse">
-                            <ul class="nav navbar-nav">
-                                {% block menu %}
-                                    <li class="active">
-                                        <a href="#"><span class="glyphicon glyphicon-home"></span> {{ 'Home' | trans }}</a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><span class="glyphicon glyphicon-info-sign"></span> {{ 'Sobre' | trans }}</a>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-pushpin"></span> Estabelecimentos <b class="caret"></b></a>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="#">Action</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">Another action</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">Something else here</a>
-                                            </li>
-                                            <li class="divider"></li>
-                                            <li class="dropdown-header">Nav header</li>
-                                            <li>
-                                                <a href="#">Separated link</a>
-                                            </li>
-                                            <li>
-                                                <a href="#">One more separated link</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                {% endblock %}
-                            </ul>
-                            <ul class="nav navbar-nav navbar-right">
-                                {% block menu_right %}
-                                    <li class="dropdown pull-right">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> <span>{{ app.user.username }}</span> <b class="caret"></b></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="#">{{ 'Configurações' | trans }}</a></li>
-                                            <li><a href="#">{{ 'Assinatura' | trans }}</a></li>
-                                            <li><a href="#">{{ 'Ajuda' | trans }}</a></li>
-                                            <li><a href="#">{{ 'Novidades' | trans }}</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="{{ path("fos_user_security_logout") }}"><i class="icon-signout"></i> {{ 'Sair' | trans }}</a></li>
-                                        </ul>
-                                    </li>
-                                {% endblock %}
-                            </ul>
-                        </nav>
-                    </div>
-                {% endblock %}
-            </header>
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/cekurtegenerator/css/style.css') }}" />
+    {%- endblock %}
 
-            <div class="container">
-                <div class="row page-header">
-                    <h2 class="pull-left">{{ title | trans }} <small>{% if (subtitle is defined) %}{{ subtitle | trans }}{% endif %}</small></h2>
-                    <div class="btn-group pull-right">
-                        {% block links %}{% endblock %}
-                    </div>
-                </div>
-                <div class="row">
-                    {% if app.session.flashbag.has('message') %}
-                        <section class="messages">
-                            {% block message %}
-                                {% for flashMessage in app.session.flashbag.get('message') %}
-                                    <div class="alert alert-{{ flashMessage.type }} fade in">
-                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                        <strong>{{ flashMessage.type | trans | capitalize }}!</strong> {{ flashMessage.message | trans }}
-                                    </div>
-                                {% endfor %}
-                            {% endblock %}
-                        </section>
-                    {% endif %}
-                    {% block content %}{% endblock %}
-                    <div class="pull-right">
-                        {% block links_footer %}{% endblock %}
-                    </div>
-                </div>
+    {%- block favicon %}
 
-                <footer class="row">
-                    {% block footer %}
-                        <div class="pull-left">
-                            <a href="http://sistemas.cekurte.com/" target="_blank">@CekurteSistemas 2013</a>
-                        </div>
-                    {% endblock %}
-                </footer>
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    {%- endblock %}
+
+    {%- block hack_ie %}
+
+    <!--[if lt IE 9]>
+        <script type="text/javascript" src="{{ asset('vendor/html5shiv/dist/html5shiv.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('vendor/respond/respond.min.js') }}"></script>
+    <![endif]-->
+    {%- endblock %}
+
+{% block head_close_tag %}</head>{% endblock %}
+{% block body_open_tag %}<body>{% endblock %}
+
+    {%- block body %}
+
+    <header class="navbar navbar-inverse navbar-fixed-top">
+        {%- block header %}
+
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <h1 class="navbar-brand" href="#">{% block app_title %}{{ 'Cekurte Generator' | trans }}{% endblock %}</h1>
             </div>
+            <nav class="navbar-collapse collapse">
+                {% block menu_open_tag -%}
+                    <ul class="nav navbar-nav">
+                {%- endblock %}
 
-        {% endblock %}
-        {% block search %}{% endblock %}
-        {% block javascripts %}
-            {% javascripts
-                'vendor/jquery/jquery.min.js'
-                'vendor/bootstrap/dist/js/bootstrap.min.js'
-                'vendor/jquery-placeholder/jquery.placeholder.min.js'
-            %}
-                <script type="text/javascript" src="{{ asset_url }}"></script>
-            {% endjavascripts %}
-            {% javascripts
-                'bundles/cekurtegenerator/js/script.js'
-                filter='?yui_js'
-            %}
-                <script type="text/javascript" src="{{ asset_url }}"></script>
-            {% endjavascripts %}
-        {% endblock %}
-    </body>
-</html>
+                    {%- block menu %}
+
+                    <li class="active">
+                        <a href="#"><span class="glyphicon glyphicon-home"></span> {{ 'Home' | trans }}</a>
+                    </li>
+                    <li>
+                        <a href="#"><span class="glyphicon glyphicon-info-sign"></span> {{ 'Sobre' | trans }}</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-pushpin"></span> Estabelecimentos <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="#">Action</a>
+                            </li>
+                            <li>
+                                <a href="#">Another action</a>
+                            </li>
+                            <li>
+                                <a href="#">Something else here</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li class="dropdown-header">Nav header</li>
+                            <li>
+                                <a href="#">Separated link</a>
+                            </li>
+                            <li>
+                                <a href="#">One more separated link</a>
+                            </li>
+                        </ul>
+                    </li>
+                    {%- endblock %}
+
+                {% block menu_close_tag %}</ul>{% endblock %}
+
+                {% block menu_right_open_tag %}<ul class="nav navbar-nav navbar-right">{% endblock %}
+                    {%- block menu_right %}
+
+                    <li class="dropdown pull-right">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> <span>asdf</span> <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">{{ 'Configurações' | trans }}</a></li>
+                            <li><a href="#">{{ 'Assinatura' | trans }}</a></li>
+                            <li><a href="#">{{ 'Ajuda' | trans }}</a></li>
+                            <li><a href="#">{{ 'Novidades' | trans }}</a></li>
+                            <li class="divider"></li>
+                            <li><a href="{{ path("fos_user_security_logout") }}"><i class="icon-signout"></i> {{ 'Sair' | trans }}</a></li>
+                        </ul>
+                    </li>
+                    {%- endblock %}
+
+                {% block menu_right_close_tag %}</ul>{% endblock %}
+
+            </nav>
+        </div>
+        {%- endblock header %}
+
+    </header>
+
+    <div class="container">
+        <div class="row page-header">
+            <h2 class="pull-left">{{ title | trans }} <small>{% if (subtitle is defined) %}{{ subtitle | trans }}{% endif %}</small></h2>
+            <div class="btn-group pull-right">
+                {%- block links %}{% endblock -%}
+            </div>
+        </div>
+        <div class="row">
+            {% if app.session.flashbag.has('message') %}
+                <section class="messages">
+                    {% block message %}
+                        {% for flashMessage in app.session.flashbag.get('message') %}
+                            <div class="alert alert-{{ flashMessage.type }} fade in">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                <strong>{{ flashMessage.type | trans | capitalize }}!</strong> {{ flashMessage.message | trans }}
+                            </div>
+                        {% endfor %}
+                    {% endblock %}
+                </section>
+            {% endif %}
+            {% block content %}{% endblock %}
+            <div class="pull-right">
+                {% block links_footer %}{% endblock %}
+            </div>
+        </div>
+
+        <footer class="row">
+            {% block footer %}
+                <div class="pull-left">
+                    <a href="http://sistemas.cekurte.com/" target="_blank">@CekurteSistemas 2013</a>
+                </div>
+            {% endblock %}
+        </footer>
+    </div>
+
+    {%- endblock body %}
+
+    {% block search %}{% endblock %}
+    {% block javascripts %}
+        <script type="text/javascript" src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('vendor/jquery-placeholder/jquery.placeholder.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/cekurtegenerator/js/script.js') }}"></script>
+    {% endblock %}
+{% block body_close_tag %}</body>{% endblock %}
+{% block html_close_tag %}</html>{% endblock %}
