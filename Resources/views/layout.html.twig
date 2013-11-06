@@ -2,36 +2,32 @@
 {% block html_open_tag %}<html>{% endblock %}
 {% block head_open_tag %}<head>{% endblock %}
 
-    {%- block meta %}
+    {%- block meta -%}
+        <meta charset="UTF-8" />
+    {%- endblock -%}
 
-    <meta charset="UTF-8" />
-    {%- endblock %}
-
-    <title>
-        {%- block title -%}
+    {%- block title -%}
+        <title>
             {%- if (title is defined) %}{{ title | trans }} {% block title_separator -%} - {%- endblock %} {% endif -%}
             {%- if (subtitle is defined) %}{{ subtitle | trans }}{% endif -%}
-        {%- endblock -%}
-    </title>
+        </title>
+    {%- endblock -%}
 
-    {%- block stylesheets %}
+    {%- block stylesheets -%}
+        <link rel="stylesheet" type="text/css" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.min.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('bundles/cekurtegenerator/css/style.css') }}" />
+    {%- endblock -%}
 
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.min.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/cekurtegenerator/css/style.css') }}" />
-    {%- endblock %}
+    {%- block favicon -%}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    {%- endblock -%}
 
-    {%- block favicon %}
-
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-    {%- endblock %}
-
-    {%- block hack_ie %}
-
-    <!--[if lt IE 9]>
-        <script type="text/javascript" src="{{ asset('vendor/html5shiv/dist/html5shiv.js') }}"></script>
-        <script type="text/javascript" src="{{ asset('vendor/respond/respond.min.js') }}"></script>
-    <![endif]-->
-    {%- endblock %}
+    {%- block hack_ie -%}
+        <!--[if lt IE 9]>
+            <script type="text/javascript" src="{{ asset('vendor/html5shiv/dist/html5shiv.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('vendor/respond/respond.min.js') }}"></script>
+        <![endif]-->
+    {%- endblock -%}
 
 {% block head_close_tag %}</head>{% endblock %}
 {% block body_open_tag %}<body>{% endblock %}
@@ -90,20 +86,21 @@
                 {% block menu_close_tag %}</ul>{% endblock %}
 
                 {% block menu_right_open_tag %}<ul class="nav navbar-nav navbar-right">{% endblock %}
-                    {%- block menu_right %}
-
-                    <li class="dropdown pull-right">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> <span>asdf</span> <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">{{ 'Configurações' | trans }}</a></li>
-                            <li><a href="#">{{ 'Assinatura' | trans }}</a></li>
-                            <li><a href="#">{{ 'Ajuda' | trans }}</a></li>
-                            <li><a href="#">{{ 'Novidades' | trans }}</a></li>
-                            <li class="divider"></li>
-                            <li><a href="{{ path("fos_user_security_logout") }}"><i class="icon-signout"></i> {{ 'Sair' | trans }}</a></li>
-                        </ul>
-                    </li>
-                    {%- endblock %}
+                    {%- block menu_right -%}
+                        {%- if app.user.username is defined -%}
+                            <li class="dropdown pull-right">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> <span>{{ app.user.username }}</span> <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">{{ 'Configurações' | trans }}</a></li>
+                                    <li><a href="#">{{ 'Assinatura' | trans }}</a></li>
+                                    <li><a href="#">{{ 'Ajuda' | trans }}</a></li>
+                                    <li><a href="#">{{ 'Novidades' | trans }}</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="{{ path("fos_user_security_logout") }}"><i class="icon-signout"></i> {{ 'Sair' | trans }}</a></li>
+                                </ul>
+                            </li>
+                        {%- endif -%}
+                    {%- endblock -%}
 
                 {% block menu_right_close_tag %}</ul>{% endblock %}
 
@@ -151,11 +148,14 @@
     {%- endblock body %}
 
     {% block search %}{% endblock %}
-    {% block javascripts %}
+
+
+    {%- block javascripts -%}
         <script type="text/javascript" src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('vendor/jquery-placeholder/jquery.placeholder.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('bundles/cekurtegenerator/js/script.js') }}"></script>
-    {% endblock %}
+    {%- endblock -%}
+
 {% block body_close_tag %}</body>{% endblock %}
 {% block html_close_tag %}</html>{% endblock %}
