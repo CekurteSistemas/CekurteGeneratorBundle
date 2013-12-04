@@ -66,10 +66,10 @@ class RoleExtension extends \Twig_Extension
      */
     protected function getBundleName()
     {
-        $matches    = array();
-        $controller = 'FOS\UserBundle\Controller\ProfileController::showAction';
+        $pattern = "/(.*)Bundle/";
+        $matches = array();
 
-        preg_match('/(.*)Bundle/', $controller, $matches);
+        preg_match($pattern, $this->getRequest()->get('_controller'), $matches);
 
         return $matches[1];
     }
