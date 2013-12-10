@@ -49,8 +49,7 @@ abstract class CekurteController extends Controller
     public function getPagination(Query $query, $page, $resultsPerPage = null)
     {
         if ($resultsPerPage === null) {
-            $resultsPerPage = $this->container->getParameter('paginator');
-            $resultsPerPage = $resultsPerPage['results_per_page'];
+            $resultsPerPage = $this->container->getParameter('paginator_number_results_per_page');
         }
 
         return $this->get('knp_paginator')->paginate($query, $page, $resultsPerPage);
