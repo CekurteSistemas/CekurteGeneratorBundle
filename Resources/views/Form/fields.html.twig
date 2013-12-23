@@ -14,7 +14,7 @@
     </div>
 {% endblock %}
 
-{% block form_widget_simple %}
+{% block widget_attributes %}
     {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control')|trim}) %}
     {{ parent() }}
-{% endblock form_widget_simple %}
+{% endblock widget_attributes %}
