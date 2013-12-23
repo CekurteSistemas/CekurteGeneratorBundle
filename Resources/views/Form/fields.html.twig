@@ -14,7 +14,25 @@
     </div>
 {% endblock %}
 
-{% block widget_attributes %}
-    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control')|trim}) %}
+{% block form_widget_simple %}
+
+    {% set type = type|default('text') %}
+
+    {% if type == 'file' %}
+        {% set cssClass = 'btn btn-success' %}
+    {% else %}
+        {% set cssClass = 'form-control' %}
+    {% endif %}
+
+    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' ' ~ cssClass)|trim}) %}
     {{ parent() }}
-{% endblock widget_attributes %}
+
+{% endblock form_widget_simple %}
+
+{% block textarea_widget %}
+
+    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control')|trim}) %}
+
+    {{ parent() }}
+
+{% endblock textarea_widget %}
