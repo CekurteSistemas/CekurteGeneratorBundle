@@ -11,7 +11,7 @@
                 <input type="hidden" name="id" value="{{ id }}" />
             {% endblock %}
             {% block token %}
-                {{ form_row(form._token) }}
+                <input type="hidden" name="form[_token]" value="{{ form._token.vars.value }}" />
             {% endblock %}
             {% block action %}
                 <button type="submit" class="btn btn-danger" title="{% if (show_label is not defined) %}{{ 'Remover' | trans }}{% endif %}" data-target="#modalDelete" data-toggle="modal">
