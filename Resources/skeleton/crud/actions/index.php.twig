@@ -15,11 +15,13 @@
 {% endblock phpdoc_method_annotations %}
      *
      * @param int $page
+     * @param string $sort
+     * @param string $direction
      * @return array
 {% include 'crud/actions/author.php.twig' %}
      */
 {% block method_definition %}
-    public function indexAction($page = 1)
+    public function indexAction($page = 1, $sort = 'ck.id', $direction = 'asc')
 {% endblock method_definition %}
     {
 {% block method_body %}
@@ -32,7 +34,7 @@
             $form->bind($this->getSession()->get('search_{{ entity | lower }}'));
         }
 
-        $query = $this->getEntityRepository()->getQuery($form->getData());
+        $query = $this->getEntityRepository()->getQuery($form->getData(), $sort, $direction);
 
         $pagination = $this->getPagination($query, $page);
 

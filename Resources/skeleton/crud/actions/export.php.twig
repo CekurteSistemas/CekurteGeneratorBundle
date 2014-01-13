@@ -6,13 +6,15 @@
      *
 {% block phpdoc_method_annotations %}
 {% if 'annotation' == format %}
-     * @Route("/export", name="{{ route_name_prefix }}_export")
+     * @Route("/export/sort/{sort}/direction/{direction}/", defaults={"sort"="ck.id", "direction"="asc"}, name="{{ route_name_prefix }}_export")
      * @Method("GET")
      * @Template()
      * @Secure(roles="ROLE_{{ bundle | upper }}_{{ entity | upper }}, ROLE_ADMIN")
 {% endif %}
 {% endblock phpdoc_method_annotations %}
      *
+     * @param string $sort
+     * @param string $direction
      * @return StreamedResponse
 {% include 'crud/actions/author.php.twig' %}
      */
@@ -30,7 +32,7 @@
             $form->bind($this->getSession()->get('search_{{ entity | lower }}'));
         }
 
-        $query = $this->getEntityRepository()->getQuery($form->getData());
+        $query = $this->getEntityRepository()->getQuery($form->getData(), $sort, $direction);
 
         $office = new CekurtePHPExcel('Relatório de {{ entity }}s');
 

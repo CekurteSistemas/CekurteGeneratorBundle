@@ -22,10 +22,12 @@ class {{ entity_class }}Repository extends EntityRepository
      * Search for records based on an entity
      *
      * @param {{ entity_class }} $entity
+     * @param string $sort
+     * @param string $direction
      * @return \Doctrine\ORM\Query
 {% include 'crud/actions/author.php.twig' %}
      */
-    public function getQuery({{ entity_class }} $entity)
+    public function getQuery({{ entity_class }} $entity, $sort, $direction)
     {
         $queryBuilder = $this->createQueryBuilder('ck');
 
@@ -73,7 +75,7 @@ class {{ entity_class }}Repository extends EntityRepository
 
 
         return $queryBuilder
-            ->orderBy('ck.id', 'ASC')
+            ->orderBy($sort, $direction)
             ->getQuery()
         ;
     }
