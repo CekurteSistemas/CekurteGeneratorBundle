@@ -122,7 +122,7 @@
                 <section class="messages">
                     {% block message %}
                         {% for flashMessage in app.session.flashbag.get('message') %}
-                            <div class="alert alert-{{ flashMessage.type }} fade in">
+                            <div class="alert alert-{% if flashMessage.type == 'error' %}danger{% else %}{{ flashMessage.type }}{% endif %} fade in">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                 <strong>{{ flashMessage.type | trans | capitalize }}!</strong> {{ flashMessage.message | trans }}
                             </div>
