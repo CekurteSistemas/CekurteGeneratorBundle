@@ -19,7 +19,7 @@
 {% include 'crud/actions/author.php.twig' %}
      */
 {% block method_definition %}
-    public function exportAction()
+    public function exportAction($sort, $direction)
 {% endblock method_definition %}
     {
 {% block method_body %}

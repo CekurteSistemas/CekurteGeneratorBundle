@@ -6,7 +6,7 @@
      *
 {% block phpdoc_method_annotations %}
 {% if 'annotation' == format %}
-     * @Route("/", name="{{ route_name_prefix }}")
+     * @Route("/", defaults={"page"=1, "sort"="ck.id", "direction"="asc"}, name="{{ route_name_prefix }}")
      * @Route("/page/{page}/sort/{sort}/direction/{direction}/", defaults={"page"=1, "sort"="ck.id", "direction"="asc"}, name="{{ route_name_prefix }}_paginator")
      * @Method("GET")
      * @Template()
@@ -21,7 +21,7 @@
 {% include 'crud/actions/author.php.twig' %}
      */
 {% block method_definition %}
-    public function indexAction($page = 1, $sort = 'ck.id', $direction = 'asc')
+    public function indexAction($page, $sort, $direction)
 {% endblock method_definition %}
     {
 {% block method_body %}
