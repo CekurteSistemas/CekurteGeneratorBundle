@@ -24,23 +24,24 @@ abstract class UserTestCase extends ContainerTestCase
     /**
      * Recupera ou cria um usuário na base de dados
      *
+     * @param  string $username
      * @param  string $role
      * @param  array  $fields os campos adicionais da entidade, exemplo: array('setNome' => 'João Paulo Cercal')
      *
      * @return User
      */
-    public function getUser($role = null, array $fields)
+    public function getUser($username = 'test', $role = null, array $fields)
     {
-        $this->user = $this->getUserManager()->findUserByUsername('test');
+        $this->user = $this->getUserManager()->findUserByUsername($username);
 
         if (!isset($this->user)) {
 
             $user = $this->getUserManager()->createUser();
 
             $user->setEnabled(true);
-            $user->setUsername('test');
-            $user->setEmail('test@fakemail.com');
-            $user->setPlainPassword('test');
+            $user->setUsername($username);
+            $user->setEmail($username . '@fakemail.com');
+            $user->setPlainPassword($username);
 
             foreach ($fields as $method => $value) {
                 $user->{$method}($value);
