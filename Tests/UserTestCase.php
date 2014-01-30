@@ -6,11 +6,16 @@ use FOS\UserBundle\Model\User;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
+ * Permite a utilização de usuários do bundle FOSUserBundle durante os testes.
+ *
  * @author João Paulo Cercal <sistemas@cekurte.com>
  * @version 1.0
  */
 abstract class UserTestCase extends ContainerTestCase
 {
+    /**
+     * @var User
+     */
     protected $user;
 
     /**

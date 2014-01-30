@@ -7,6 +7,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\EntityManager;
 
 /**
+ * ContainerTestCase
+ *
  * @author João Paulo Cercal <sistemas@cekurte.com>
  * @version 1.0
  */
