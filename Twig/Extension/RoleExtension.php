@@ -71,7 +71,7 @@ class RoleExtension extends \Twig_Extension
 
         preg_match($pattern, $this->getRequest()->get('_controller'), $matches);
 
-        return $matches[1];
+        return empty($matches) ? null : $matches[1];
     }
 
     /**
@@ -86,7 +86,7 @@ class RoleExtension extends \Twig_Extension
 
         preg_match($pattern, $this->getRequest()->get('_controller'), $matches);
 
-        return $matches[1];
+        return empty($matches) ? null : $matches[1];
     }
 
     /**
@@ -101,7 +101,7 @@ class RoleExtension extends \Twig_Extension
 
         preg_match($pattern, $this->getRequest()->get('_controller'), $matches);
 
-        return $matches[1];
+        return empty($matches) ? null : $matches[1];
     }
 
     /**
