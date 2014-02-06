@@ -10,54 +10,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @author João Paulo Cercal <sistemas@cekurte.com>
  * @version 1.0
  */
-class RoleExtension extends \Twig_Extension
+class RoleExtension extends ContainerAwareTwigExtension
 {
-
     const ROLE_PREFIX           = 'ROLE';
     const ROLE_SEPARATOR        = '_';
-
-    /**
-     * @var \Symfony\Component\DependencyInjection\ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * Recupera uma instância de ContainerInterface
-     *
-     * @return \Symfony\Component\DependencyInjection\ContainerInterface
-     */
-    protected function getContainer()
-    {
-        return $this->container;
-    }
-
-    /**
-     * Atalho para recuperar uma instância de SecurityContext
-     *
-     * @return \Symfony\Component\Security\Core\SecurityContext
-     */
-    protected function getSecurity()
-    {
-        return $this->getContainer()->get('security.context');
-    }
-
-    /**
-     * Atalho para recuperar uma instância de Request
-     *
-     * @return \Symfony\Component\HttpFoundation\Request
-     */
-    protected function getRequest()
-    {
-        return $this->getContainer()->get('request');
-    }
 
     /**
      * Recupera o nome do bundle
@@ -155,5 +111,4 @@ class RoleExtension extends \Twig_Extension
     {
         return 'cekurte_role_extension';
     }
-
 }
