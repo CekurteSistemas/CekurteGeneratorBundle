@@ -22,10 +22,10 @@
 {% endblock method_definition %}
     {
 {% block method_body %}
-        if ('POST' === $request->getMethod()) {
-            $this->getSession()->set('search_{{ entity | lower }}', $request);
+        if ($request->isMethod('POST')) {
+            $this->getContainer()->getSession()->set('search_{{ entity | lower }}', $request);
         } else {
-            $this->getSession()->remove('search_{{ entity | lower }}');
+            $this->getContainer()->getSession()->remove('search_{{ entity | lower }}');
         }
 {% endblock method_body %}
 

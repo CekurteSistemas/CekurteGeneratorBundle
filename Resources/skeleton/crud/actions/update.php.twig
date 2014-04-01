@@ -35,7 +35,7 @@
             $form,
             $request,
             $this->getDoctrine()->getManager(),
-            $this->getFlashBag()
+            $this->getContainer()->getFlashBag()
         );
 
         if ($id = $handler->save()) {
