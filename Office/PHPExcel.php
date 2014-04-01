@@ -38,21 +38,22 @@ class PHPExcel
     /**
      * Start
      *
-     * @param string $title título do documento
+     * @param string $headerTitle título do documento
+     * @param string $activeSheetTitle título da planilha (aba)
      */
-    public function __construct($title)
+    public function __construct($headerTitle, $activeSheetTitle = null)
     {
         $this->phpExcel = new PHPOfficeExcel();
 
         $this->getPhpExcel()->getProperties()
-            ->setTitle($title)
+            ->setTitle($headerTitle)
             ->setCreator(self::DOCUMENT_CREATED_BY)
             ->setLastModifiedBy(self::DOCUMENT_CREATED_BY)
         ;
 
         $this->getPhpExcel()->setActiveSheetIndex(0);
 
-        $this->getPhpExcel()->getActiveSheet()->setTitle($title);
+        $this->getPhpExcel()->getActiveSheet()->setTitle(is_null($activeSheetTitle) ? $headerTitle : $activeSheetTitle);
 
         $this->getPhpExcel()->getActiveSheet()->getPageSetup()
             ->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE)
