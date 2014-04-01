@@ -13,6 +13,6 @@
 {% endblock method_definition %}
     {
 {% block method_return %}
-        return $this->getDoctrine()->getManager()->getRepository('{{ bundle }}:{{ entity }}');
+        return $this->getContainer()->getRepository('{{ bundle }}:{{ entity }}');
 {% endblock method_return %}
     }
