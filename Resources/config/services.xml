@@ -8,5 +8,9 @@
             <tag name="twig.extension" />
             <argument type="service" id="service_container" />
         </service>
+        <service id="cekurte_generator.twig.extension.actionextension" class="Cekurte\GeneratorBundle\Twig\Extension\ActionExtension">
+            <tag name="twig.extension" />
+            <argument type="service" id="service_container" />
+        </service>
     </services>
 </container>
