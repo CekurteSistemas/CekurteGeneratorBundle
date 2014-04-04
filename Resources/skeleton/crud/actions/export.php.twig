@@ -27,9 +27,9 @@
             'search' => true,
         ));
 
-        if ($this->getContainer()->getSession()->has('search_{{ entity | lower }}')) {
+        if ($this->get('session')->has('search_{{ entity | lower }}')) {
 
-            $form->handleRequest($this->getContainer()->getSession()->get('search_{{ entity | lower }}'));
+            $form->handleRequest($this->get('session')->get('search_{{ entity | lower }}'));
         }
 
         $query = $this->getEntityRepository()->getQuery($form->getData(), $sort, $direction);

@@ -34,8 +34,8 @@
         $handler = new {{ entity }}FormHandler(
             $form,
             $request,
-            $this->getDoctrine()->getManager(),
-            $this->getContainer()->getFlashBag()
+            $this->get('doctrine')->getManager(),
+            $this->get('session')->getFlashBag()
         );
 
         if ($id = $handler->save()) {

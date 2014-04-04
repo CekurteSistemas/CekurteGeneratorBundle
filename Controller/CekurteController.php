@@ -2,7 +2,7 @@
 
 namespace Cekurte\GeneratorBundle\Controller;
 
-use Cekurte\ComponentBundle\Controller\Controller as ComponentController;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller as SymfonyController;
 
 /**
  * Controller padrão da aplicação.
@@ -10,7 +10,7 @@ use Cekurte\ComponentBundle\Controller\Controller as ComponentController;
  * @author João Paulo Cercal <sistemas@cekurte.com>
  * @version 1.0
  */
-abstract class CekurteController extends ComponentController
+abstract class CekurteController extends SymfonyController
 {
     /**
      * Atalho para retornar a paginação de registros.

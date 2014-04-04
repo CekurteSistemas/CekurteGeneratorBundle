@@ -23,9 +23,9 @@
     {
 {% block method_body %}
         if ($request->isMethod('POST')) {
-            $this->getContainer()->getSession()->set('search_{{ entity | lower }}', $request);
+            $this->get('session')->set('search_{{ entity | lower }}', $request);
         } else {
-            $this->getContainer()->getSession()->remove('search_{{ entity | lower }}');
+            $this->get('session')->remove('search_{{ entity | lower }}');
         }
 {% endblock method_body %}
 

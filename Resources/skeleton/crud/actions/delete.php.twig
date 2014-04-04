@@ -25,8 +25,8 @@
         $handler = new {{ entity }}FormHandler(
             $this->createDeleteForm(),
             $request,
-            $this->getDoctrine()->getManager(),
-            $this->getContainer()->getFlashBag()
+            $this->get('doctrine')->getManager(),
+            $this->get('session')->getFlashBag()
         );
 {% endblock method_body %}
 
