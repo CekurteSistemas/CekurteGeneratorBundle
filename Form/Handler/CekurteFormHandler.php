@@ -88,7 +88,7 @@ abstract class CekurteFormHandler
      */
     protected function formIsValid()
     {
-        $this->getForm()->handleRequest($this->getRequest());
+        $this->getForm()->bind($this->getRequest());
 
         if ($this->getForm()->isValid()) {
             return true;

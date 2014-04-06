@@ -31,7 +31,7 @@
 
         if ($this->get('session')->has('search_{{ entity | lower }}')) {
 
-            $form->handleRequest($this->get('session')->get('search_{{ entity | lower }}'));
+            $form->bind($this->get('session')->get('search_{{ entity | lower }}'));
         }
 
         $query = $this->getEntityRepository()->getQuery($form->getData(), $sort, $direction);
