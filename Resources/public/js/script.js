@@ -6,7 +6,9 @@ jQuery(document).ready(function($) {
     * dados
     */
 
-    $('button[data-target="#modalDelete"]').on('click', function() {
+    $('button[data-target="#modalDelete"]').on('click', function(event) {
+
+        event.preventDefault();
 
         var form = $(this).parent();
 
