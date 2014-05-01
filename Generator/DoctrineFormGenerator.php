@@ -71,7 +71,7 @@ class DoctrineFormGenerator extends Generator
             array_pop($parts);
 
             $this->renderFile('form/' . $classConfig['suffix'] . '.php.twig', $this->classPath, array(
-                'fields'           => $this->getFieldsFromMetadata($metadata),
+                'fields'           => $this->getFieldMappingsFromMetadata($metadata),
                 'namespace'        => $bundle->getNamespace(),
                 'entity_namespace' => implode('\\', $parts),
                 'entity_class'     => $entityClass,
@@ -82,24 +82,19 @@ class DoctrineFormGenerator extends Generator
         }
     }
 
-    /**
-     * @see \Sensio\Bundle\GeneratorBundle\Generator\DoctrineFormGenerator::getFieldsFromMetadata(ClassMetadataInfo $metadata)
-     */
-    private function getFieldsFromMetadata(ClassMetadataInfo $metadata)
+    private function getFieldMappingsFromMetadata(ClassMetadataInfo $metadata)
     {
-        $fields = (array) $metadata->fieldNames;
+        $fieldMappings = (array) $metadata->fieldMappings;
 
         // Remove the primary key field if it's not managed manually
         if (!$metadata->isIdentifierNatural()) {
-            $fields = array_diff($fields, $metadata->identifier);
-        }
-
-        foreach ($metadata->associationMappings as $fieldName => $relation) {
-            if ($relation['type'] !== ClassMetadataInfo::ONE_TO_MANY) {
-                $fields[] = $fieldName;
+            foreach ($fieldMappings as $fieldName => $fieldMapping) {
+                if (in_array($fieldName, $metadata->identifier)) {
+                    unset($fieldMappings[$fieldName]);
+                }
             }
         }
 
-        return $fields;
+        return $fieldMappings;
     }
 }

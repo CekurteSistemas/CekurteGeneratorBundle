@@ -57,10 +57,10 @@
                         <a href="#"><span class="glyphicon glyphicon-home"></span> {{ 'Home' | trans }}</a>
                     </li>
                     <li>
-                        <a href="#"><span class="glyphicon glyphicon-info-sign"></span> {{ 'Sobre' | trans }}</a>
+                        <a href="#"><span class="glyphicon glyphicon-info-sign"></span> {{ 'About' | trans }}</a>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-pushpin"></span> Estabelecimentos <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-pushpin"></span> Example Dropdown <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li>
                                 <a href="#">Action</a>
@@ -91,12 +91,10 @@
                             <li class="dropdown pull-right">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> <span>{{ app.user.username }}</span> <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#">{{ 'Configurações' | trans }}</a></li>
-                                    <li><a href="#">{{ 'Assinatura' | trans }}</a></li>
-                                    <li><a href="#">{{ 'Ajuda' | trans }}</a></li>
-                                    <li><a href="#">{{ 'Novidades' | trans }}</a></li>
+                                    <li><a href="#">{{ 'Settings' | trans }}</a></li>
+                                    <li><a href="#">{{ 'Help' | trans }}</a></li>
                                     <li class="divider"></li>
-                                    <li><a href="{{ path("fos_user_security_logout") }}"><i class="icon-signout"></i> {{ 'Sair' | trans }}</a></li>
+                                    <li><a href="{{ path("fos_user_security_logout") }}"><i class="icon-signout"></i> {{ 'Logout' | trans }}</a></li>
                                 </ul>
                             </li>
                         {%- endif -%}
@@ -139,7 +137,7 @@
         <footer class="row">
             {% block footer %}
                 <div class="pull-left">
-                    <a href="http://sistemas.cekurte.com/" target="_blank">@CekurteSistemas 2013</a>
+                    <a href="http://sistemas.cekurte.com/" target="_blank">@CekurteSistemas 2014</a>
                 </div>
             {% endblock %}
         </footer>

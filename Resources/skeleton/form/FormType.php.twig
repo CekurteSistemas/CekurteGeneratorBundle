@@ -28,7 +28,7 @@ class {{ form_class }} extends AbstractType
         if ($options['search'] === true) {
             {% for field in fields %}
 
-            $builder->add('{{ field }}')->setRequired(false);
+            $builder->add('{{ field.fieldName }}')->setRequired(false);
 
             {%- endfor %}
 
@@ -38,12 +38,19 @@ class {{ form_class }} extends AbstractType
             $builder
             {%- for field in fields %}
 
-                ->add('{{ field }}')
+                {% if field.type == 'text' %}
+                ->add('{{ field.fieldName }}', 'textarea', array(
+                    'attr'  => array(
+                        'class' => 'ckeditor'
+                    )
+                ))
+                {% else %}
+                ->add('{{ field.fieldName }}')
+                {% endif %}
 
             {%- endfor %}
 
             ;
-
         }
     }
 

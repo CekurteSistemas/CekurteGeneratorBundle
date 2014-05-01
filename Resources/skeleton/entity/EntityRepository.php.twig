@@ -41,11 +41,16 @@ class {{ entity_class }}Repository extends EntityRepository
 
 
         if (!empty($data['{{ field.columnName }}'])) {
-            {% if field.type == 'date' -%}
+            {% if field.type == 'date' or field.type == 'datetime' -%}
             $queryBuilder
-                //->andWhere($queryBuilder->expr()->lte('ck.{{ field.columnName }}', ':{{ field.columnName }}'))
-                ->andWhere($queryBuilder->expr()->gte('ck.{{ field.columnName }}', ':{{ field.columnName }}'))
-                ->setParameter('{{ field.columnName }}', $data['{{ field.columnName }}'])
+
+                ->andWhere($queryBuilder->expr()->between(
+                    'ck.{{ field.columnName }}',
+                    ':{{ field.columnName }}_from',
+                    ':{{ field.columnName }}_to'
+                ))
+                ->setParameter('{{ field.columnName }}_from', $data['{{ field.columnName }}'])
+                ->setParameter('{{ field.columnName }}_to', $data['{{ field.columnName }}'])
             ;
             {%- elseif field.type == 'string' -%}
 

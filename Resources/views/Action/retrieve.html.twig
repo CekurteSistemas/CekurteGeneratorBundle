@@ -1,7 +1,7 @@
 {% if cekurte_is_granted('RETRIEVE') %}
     {% block container_open %}{% endblock %}
         {% block action %}
-            <a href="{{ path(route, { 'id': id }) }}" class="btn btn-default" title="{{ 'Visualizar' | trans }}">
+            <a href="{{ path(route, { 'id': id }) }}" class="btn btn-default" title="{{ 'Details' | trans }}">
                 {% block action_icon %}<span class="glyphicon glyphicon-new-window"></span>{% endblock %}
             </a>
         {% endblock %}

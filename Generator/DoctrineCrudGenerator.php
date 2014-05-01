@@ -23,6 +23,17 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
  */
 class DoctrineCrudGenerator extends Generator
 {
+    protected $container;
+
+    /**
+     * Constructor
+     */
+    public function __construct($container)
+    {
+        $this->container    = $container;
+        $this->filesystem   = $container->get('filesystem');
+    }
+
     /**
      * Generate the CRUD controller.
      *
@@ -189,4 +200,21 @@ class DoctrineCrudGenerator extends Generator
         ));
     }
 
+    /**
+     * Generates the show.html.twig template in the final bundle.
+     *
+     * @param string $dir The path to the folder that hosts templates in the bundle
+     */
+    protected function generateShowView($dir)
+    {
+        $this->renderFile('crud/views/show.html.twig.twig', $dir.'/show.html.twig', array(
+            'bundle'            => $this->bundle->getName(),
+            'entity'            => $this->entity,
+            'fields'            => $this->metadata->fieldMappings,
+            'actions'           => $this->actions,
+            'route_prefix'      => $this->routePrefix,
+            'route_name_prefix' => $this->routeNamePrefix,
+            'default_locale'    => $this->container->getParameter('kernel.default_locale'),
+        ));
+    }
 }

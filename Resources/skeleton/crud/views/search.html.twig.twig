@@ -3,10 +3,10 @@
 {% endblock extends %}
 
 {% block body %}
-{{ "{% block title -%}{{ 'Pesquisar' | trans }}{% endblock %}" }}
+{{ "{% block title -%}{{ 'Search' | trans }}{% endblock %}" }}
 
 {{ "{% block form_open -%}" }}
-    <form class="form-horizontal" role="form" action="{{" {{ path('" ~ route_name_prefix ~ "_search') }}" }}" method="post">
+    <form class="form-horizontal" role="form" action="{{"{{ path('" ~ route_name_prefix ~ "_search') }}" }}" method="post">
 {{ "{% endblock %}" }}
 
 {{ "{% block content -%}" }}
@@ -14,6 +14,6 @@
 {{ "{% endblock %}" }}
 
 {{ "{% block action_close -%}" }}
-    <a href="{{" {{ path('" ~ route_name_prefix ~ "_search') }}" }}" class="btn btn-default">{{ "{{ 'Fechar' | trans }}" }}</a>
+    <a href="{{" {{ path('" ~ route_name_prefix ~ "_search') }}" }}" class="btn btn-default">{{ "{{ 'Close' | trans }}" }}</a>
 {{ "{% endblock %}" }}
 {% endblock body %}

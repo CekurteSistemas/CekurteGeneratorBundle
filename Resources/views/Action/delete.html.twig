@@ -14,8 +14,8 @@
                 <input type="hidden" name="form[_token]" value="{{ form._token.vars.value }}" />
             {% endblock %}
             {% block action %}
-                <button type="submit" class="btn btn-danger" title="{% if (show_label is not defined) %}{{ 'Remover' | trans }}{% endif %}" data-target="#modalDelete" data-toggle="modal">
-                    {% block action_icon %}<span class="glyphicon glyphicon-remove"></span>{% endblock %} {% if (show_label is defined) and (show_label == true) %}{{ 'Remover' | trans }}{% endif %}
+                <button type="submit" class="btn btn-danger" title="{% if (show_label is not defined) %}{{ 'Delete' | trans }}{% endif %}" data-target="#modalDelete" data-toggle="modal">
+                    {% block action_icon %}<span class="glyphicon glyphicon-remove"></span>{% endblock %} {% if (show_label is defined) and (show_label == true) %}{{ 'Delete' | trans }}{% endif %}
                 </button>
             {% endblock %}
         {% block form_close %}</form>{% endblock %}

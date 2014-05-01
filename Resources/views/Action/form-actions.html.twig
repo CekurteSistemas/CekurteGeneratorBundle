@@ -3,12 +3,12 @@
         <div class="btn-group">
             {% block container_reset_open %}{% endblock %}
                 {% block action_reset %}
-                    <button type="reset" class="btn btn-default">{% block action_reset_icon %}<span class="glyphicon glyphicon-trash"></span>{% endblock %} {% block action_reset_label %}{{ 'Limpar'|trans }}{% endblock %}</button>
+                    <button type="reset" class="btn btn-default">{% block action_reset_icon %}<span class="glyphicon glyphicon-trash"></span>{% endblock %} {% block action_reset_label %}{{ 'Reset'|trans }}{% endblock %}</button>
                 {% endblock %}
             {% block container_reset_close %}{% endblock %}
             {% block container_submit_open %}{% endblock %}
                 {% block action_submit %}
-                    <button type="submit" class="btn btn-primary">{% block action_submit_icon %}<span class="glyphicon glyphicon-floppy-disk"></span>{% endblock %} {% block action_submit_label %}{{ 'Salvar'|trans }}{% endblock %}</button>
+                    <button type="submit" class="btn btn-primary">{% block action_submit_icon %}<span class="glyphicon glyphicon-floppy-disk"></span>{% endblock %} {% block action_submit_label %}{{ 'Save'|trans }}{% endblock %}</button>
                 {% endblock %}
             {% block container_submit_close %}{% endblock %}
         </div>

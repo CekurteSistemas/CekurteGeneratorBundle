@@ -34,12 +34,18 @@
 
         $query = $this->getEntityRepository()->getQuery($form->getData(), $sort, $direction);
 
-        $office = new CekurtePHPExcel('Relatório de {{ entity }}s');
+        $translator = $this->get('translator');
+
+        $office = new CekurtePHPExcel(sprintf(
+            '%s %s',
+            $translator->trans('Report of'),
+            $translator->trans('{{ entity }}')
+        ));
 
         $office
             ->setHeader(array(
             {% for field in fields %}
-    '{{ field.fieldName }}' => '{{ field.fieldName }}',
+    '{{ field.fieldName }}' => $translator->trans('{{ field.fieldName|capitalize }}'),
             {% endfor -%}
         ))
             ->setData($query->getArrayResult())
