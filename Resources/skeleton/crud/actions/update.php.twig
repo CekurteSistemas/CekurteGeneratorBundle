@@ -41,20 +41,36 @@
         if ($id = $handler->save()) {
             return $this->redirect($this->generateUrl('{{ route_name_prefix }}_show', array('id' => $id)));
         }
+
+        $editForm = $this->createForm(new {{ entity }}FormType(), $entity);
 {% endblock method_body %}
 
 {% block method_return %}
 {% if 'annotation' == format %}
         return array(
             'entity'      => $entity,
-            'edit_form'   => $form->createView(),
+            'edit_form'   => $editForm->createView(),
             'delete_form' => $this->createDeleteForm()->createView(),
+            {%- for field in fields %}
+                {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
+
+            '{{ entity|lower ~ "_" ~ field.fieldName }}' => $editForm->get('{{ entity|lower ~ "_" ~ field.fieldName }}')->getData(),
+
+                {%- endif %}
+            {% endfor %}
         );
 {% else %}
         return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:edit.html.twig', array(
             'entity'      => $entity,
-            'edit_form'   => $form->createView(),
+            'edit_form'   => $editForm->createView(),
             'delete_form' => $this->createDeleteForm()->createView(),
+            {%- for field in fields %}
+                {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
+
+            '{{ entity|lower ~ "_" ~ field.fieldName }}' => $editForm->get('{{ entity|lower ~ "_" ~ field.fieldName }}')->getData(),
+
+                {%- endif %}
+            {% endfor %}
         ));
 {% endif %}
 {% endblock method_return %}

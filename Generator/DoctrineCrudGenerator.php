@@ -187,6 +187,7 @@ class DoctrineCrudGenerator extends Generator
             'record_actions'    => $this->getRecordActions(),
             'route_prefix'      => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
+            'default_locale'    => $this->container->getParameter('kernel.default_locale'),
         ));
 
         $this->renderFile('crud/views/search.html.twig.twig', $dir.'/search.html.twig', array(
@@ -216,5 +217,56 @@ class DoctrineCrudGenerator extends Generator
             'route_name_prefix' => $this->routeNamePrefix,
             'default_locale'    => $this->container->getParameter('kernel.default_locale'),
         ));
+    }
+
+    /**
+     * Generates the new.html.twig template in the final bundle.
+     *
+     * @param string $dir The path to the folder that hosts templates in the bundle
+     */
+    protected function generateNewView($dir)
+    {
+        $this->renderFile('crud/views/new.html.twig.twig', $dir.'/new.html.twig', array(
+            'fields'            => $this->getFieldMappings(),
+            'bundle'            => $this->bundle->getName(),
+            'entity'            => $this->entity,
+            'route_prefix'      => $this->routePrefix,
+            'route_name_prefix' => $this->routeNamePrefix,
+            'actions'           => $this->actions,
+        ));
+    }
+
+    /**
+     * Generates the edit.html.twig template in the final bundle.
+     *
+     * @param string $dir The path to the folder that hosts templates in the bundle
+     */
+    protected function generateEditView($dir)
+    {
+        $this->renderFile('crud/views/edit.html.twig.twig', $dir.'/edit.html.twig', array(
+            'fields'            => $this->getFieldMappings(),
+            'route_prefix'      => $this->routePrefix,
+            'route_name_prefix' => $this->routeNamePrefix,
+            'entity'            => $this->entity,
+            'bundle'            => $this->bundle->getName(),
+            'actions'           => $this->actions,
+        ));
+    }
+
+
+    private function getFieldMappings()
+    {
+        $fieldMappings = (array) $this->metadata->fieldMappings;
+
+        // Remove the primary key field if it's not managed manually
+        if (!$this->metadata->isIdentifierNatural()) {
+            foreach ($fieldMappings as $fieldName => $fieldMapping) {
+                if (in_array($fieldName, $this->metadata->identifier)) {
+                    unset($fieldMappings[$fieldName]);
+                }
+            }
+        }
+
+        return $fieldMappings;
     }
 }

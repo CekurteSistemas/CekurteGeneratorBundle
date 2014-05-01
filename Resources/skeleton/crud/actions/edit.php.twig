@@ -37,12 +37,26 @@
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $this->createDeleteForm()->createView(),
+            {%- for field in fields %}
+                {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
+
+            '{{ entity|lower ~ "_" ~ field.fieldName }}' => $editForm->get('{{ entity|lower ~ "_" ~ field.fieldName }}')->getData(),
+
+                {%- endif %}
+            {% endfor %}
         );
 {% else %}
         return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:edit.html.twig', array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $this->createDeleteForm()->createView(),
+            {%- for field in fields %}
+                {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
+
+            '{{ entity|lower ~ "_" ~ field.fieldName }}' => $editForm->get('{{ entity|lower ~ "_" ~ field.fieldName }}')->getData(),
+
+                {%- endif %}
+            {% endfor %}
         ));
 {% endif %}
 {% endblock method_return %}

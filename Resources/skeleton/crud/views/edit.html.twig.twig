@@ -30,5 +30,31 @@
         {{ "{{ form_widget(edit_form) }}" }}
         {{ "{% include 'CekurteGeneratorBundle:Action:form-actions.html.twig' %}" }}
     </form>
+    {% for field in fields %}
+        {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
+
+    {{ "{% include 'CekurteUploaderBundle:TwitterBootstrap3:layout.html.twig' with {
+        'endpoint': '" ~ entity|lower ~ "_" ~ field.fieldName ~ "',
+        'label'   : '" ~ field.fieldName|capitalize ~ "'|trans,
+        'image'   : " ~ entity|lower ~ "_" ~ field.fieldName ~ "
+    } %}" }}
+
+        {%- endif %}
+    {% endfor %}
+
 {{ "{% endblock %}" }}
+
+{{ "{%- block javascripts -%}" }}
+    {{ "{{ parent() }}" }}
+    {% for field in fields %}
+        {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
+
+    {{ "{% include 'CekurteUploaderBundle:TwitterBootstrap3:layout.html.twig' with {
+        'endpoint': '" ~ entity|lower ~ "_" ~ field.fieldName ~ "'
+    } %}" }}
+
+        {%- endif %}
+    {% endfor %}
+
+{{ "{%- endblock -%}" }}
 {% endblock body %}

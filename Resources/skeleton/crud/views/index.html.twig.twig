@@ -52,9 +52,33 @@
 
                     <td><a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity.id }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></td>
 
-                {%- elseif metadata.type in ['date', 'datetime'] %}
+                {%- elseif field in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
 
-                    <td>{{ '{% if entity.' ~ field|replace({'_': ''}) ~ ' %}{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'d/m/Y H:i:s\') }}{% endif %}' }}</td>
+                    <td>
+                        {{ "{%- if entity." ~ field|replace({'_': ''}) ~ " != '' -%}" }}
+                            <img class="img-thumbnail" src="{{ "{{ entity." ~ field|replace({'_': ''}) ~ "|imagine_filter('admin_thumbnail_list') }}" }}">
+                        {{ "{%- endif -%}" }}
+                    </td>
+
+                {%- elseif metadata.type in ['date'] %}
+
+                    {%- if default_locale == 'pt_BR' -%}
+                        <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'d/m/Y\') }}' }}</td>
+                    {%- else -%}
+                        <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d\') }}' }}</td>
+                    {%- endif -%}
+
+                {%- elseif metadata.type in ['datetime'] %}
+
+                    {%- if default_locale == 'pt_BR' -%}
+                        <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'d/m/Y H:i:s\') }}' }}</td>
+                    {%- else -%}
+                        <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d H:i:s\') }}' }}</td>
+                    {%- endif -%}
+
+                {%- elseif metadata.type in ['boolean'] %}
+
+                    <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' == true ? ' ~ "'Yes'|trans" ~ ' : ' ~  "'No'|trans" ~' }}' }}</td>
 
                 {%- else %}
 

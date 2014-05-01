@@ -38,15 +38,21 @@ class {{ form_class }} extends AbstractType
             $builder
             {%- for field in fields %}
 
-                {% if field.type == 'text' %}
+                {% if field.type == 'text' -%}
                 ->add('{{ field.fieldName }}', 'textarea', array(
                     'attr'  => array(
                         'class' => 'ckeditor'
                     )
                 ))
-                {% else %}
+                {%- elseif field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] -%}
+                ->add('{{ field.fieldName }}', 'hidden', array(
+                    'attr'  => array(
+                        'class' => '{{ entity_class|lower }}_{{ field.fieldName }}'
+                    )
+                ))
+                {%- else -%}
                 ->add('{{ field.fieldName }}')
-                {% endif %}
+                {%- endif %}
 
             {%- endfor %}
 

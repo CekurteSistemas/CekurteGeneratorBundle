@@ -39,7 +39,15 @@
                 <tr>
                     <th>{{ "{{ '" ~ field|capitalize ~ "'|trans }}" }}</th>
 
-                {%- if metadata.type in ['date'] %}
+                {%- if field in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
+
+                    <td>
+                        {{ "{%- if entity." ~ field|replace({'_': ''}) ~ " != '' -%}" }}
+                            <img class="img-thumbnail" src="{{ "{{ entity." ~ field|replace({'_': ''}) ~ "|imagine_filter('admin_thumbnail_list') }}" }}">
+                        {{ "{%- endif -%}" }}
+                    </td>
+
+                {%- elseif metadata.type in ['date'] %}
 
                     {%- if default_locale == 'pt_BR' -%}
                         <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'d/m/Y\') }}' }}</td>
