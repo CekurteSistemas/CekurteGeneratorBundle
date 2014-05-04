@@ -6,12 +6,13 @@
         <meta charset="UTF-8" />
     {%- endblock -%}
 
+
+    {%- block title_open_tag -%}<title>{%- endblock -%}
     {%- block title -%}
-        <title>
-            {%- if (title is defined) %}{{ title | trans }} {% block title_separator -%} - {%- endblock %} {% endif -%}
-            {%- if (subtitle is defined) %}{{ subtitle | trans }}{% endif -%}
-        </title>
+        {%- if (title is defined) %}{{ title | trans }} {% block title_separator -%} - {%- endblock %} {% endif -%}
+        {%- if (subtitle is defined) %}{{ subtitle | trans }}{% endif -%}
     {%- endblock -%}
+    {%- block title_close_tag -%}</title>{%- endblock -%}
 
     {%- block stylesheets -%}
         <link rel="stylesheet" type="text/css" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.min.css') }}" />
