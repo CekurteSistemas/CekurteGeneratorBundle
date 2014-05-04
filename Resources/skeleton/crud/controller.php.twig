@@ -35,9 +35,18 @@ use {{ namespace }}\Form\Handler\{{ entity }}FormHandler;
 {% endblock phpdoc_class_header %}
  *
 {% block phpdoc_class_annotations %}
-{% if 'annotation' == format %}
- * @Route("/{{ route_prefix }}")
-{% endif %}
+{% if 'annotation' == format -%}
+{% set base_url = route_prefix|replace({'_': '-'})|split('-') %}
+{% set prefix = base_url|first %}
+ * @Route("/{{ prefix }}
+{%- if base_url|first != base_url|last -%}
+    {{ prefix in ['admin', 'api'] ? '/' : '-' }}
+{%- endif -%}
+{%- for url in base_url|slice(1) -%}
+    {{ url }}{{ url == base_url|last ? '' : '-' }}
+{%- endfor -%}")
+{%- endif %}
+
 {% endblock phpdoc_class_annotations %}
  *
  * @author João Paulo Cercal <sistemas@cekurte.com>
