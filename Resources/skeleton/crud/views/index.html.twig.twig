@@ -76,6 +76,10 @@
                         <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d H:i:s\') }}' }}</td>
                     {%- endif -%}
 
+                {%- elseif metadata.type in ['text'] %}
+
+                    <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|striptags|truncate(50) }}' }}</td>
+
                 {%- elseif metadata.type in ['boolean'] %}
 
                     <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' == true ? ' ~ "'Yes'|trans" ~ ' : ' ~  "'No'|trans" ~' }}' }}</td>
