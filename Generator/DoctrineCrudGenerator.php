@@ -145,7 +145,7 @@ class DoctrineCrudGenerator extends Generator
             'namespace'         => $this->bundle->getNamespace(),
             'entity_namespace'  => $entityNamespace,
             'format'            => $this->format,
-            'fields'            => $this->metadata->fieldMappings,
+            'fields'            => $this->getFieldMappings(),
         ));
     }
 
@@ -168,7 +168,7 @@ class DoctrineCrudGenerator extends Generator
         $this->renderFile('entity/EntityRepository.php.twig', $target, array(
             'entity_class'      => $entityClass,
             'namespace'         => $this->bundle->getNamespace(),
-            'fields'            => $this->metadata->fieldMappings,
+            'fields'            => $this->getFieldMappings(),
         ));
     }
 
@@ -182,7 +182,7 @@ class DoctrineCrudGenerator extends Generator
         $this->renderFile('crud/views/index.html.twig.twig', $dir.'/index.html.twig', array(
             'bundle'            => $this->bundle->getName(),
             'entity'            => $this->entity,
-            'fields'            => $this->metadata->fieldMappings,
+            'fields'            => $this->getFieldMappings(),
             'actions'           => $this->actions,
             'record_actions'    => $this->getRecordActions(),
             'route_prefix'      => $this->routePrefix,
@@ -193,7 +193,7 @@ class DoctrineCrudGenerator extends Generator
         $this->renderFile('crud/views/search.html.twig.twig', $dir.'/search.html.twig', array(
             'bundle'            => $this->bundle->getName(),
             'entity'            => $this->entity,
-            'fields'            => $this->metadata->fieldMappings,
+            'fields'            => $this->getFieldMappings(),
             'actions'           => $this->actions,
             'record_actions'    => $this->getRecordActions(),
             'route_prefix'      => $this->routePrefix,
@@ -211,7 +211,7 @@ class DoctrineCrudGenerator extends Generator
         $this->renderFile('crud/views/show.html.twig.twig', $dir.'/show.html.twig', array(
             'bundle'            => $this->bundle->getName(),
             'entity'            => $this->entity,
-            'fields'            => $this->metadata->fieldMappings,
+            'fields'            => $this->getFieldMappings(),
             'actions'           => $this->actions,
             'route_prefix'      => $this->routePrefix,
             'route_name_prefix' => $this->routeNamePrefix,
