@@ -33,44 +33,44 @@ class {{ entity_class }}Repository extends EntityRepository
 
         $data = array(
     {% for field in fields %}
-        '{{ field.columnName }}' => $entity->get{{ field.fieldName|first|upper }}{{ field.fieldName|slice(1) }}(),
+        '{{ field.fieldName }}' => $entity->get{{ field.fieldName|first|upper }}{{ field.fieldName|slice(1) }}(),
     {% endfor %}
     );
 
         {%- for field in fields %}
 
 
-        if (!empty($data['{{ field.columnName }}'])) {
+        if (!empty($data['{{ field.fieldName }}'])) {
             {% if field.type == 'date' or field.type == 'datetime' -%}
             $queryBuilder
 
                 ->andWhere($queryBuilder->expr()->between(
-                    'ck.{{ field.columnName }}',
-                    ':{{ field.columnName }}_from',
-                    ':{{ field.columnName }}_to'
+                    'ck.{{ field.fieldName }}',
+                    ':{{ field.fieldName }}From',
+                    ':{{ field.fieldName }}To'
                 ))
-                ->setParameter('{{ field.columnName }}_from', $data['{{ field.columnName }}'])
-                ->setParameter('{{ field.columnName }}_to', $data['{{ field.columnName }}'])
+                ->setParameter('{{ field.fieldName }}From', $data['{{ field.fieldName }}'])
+                ->setParameter('{{ field.fieldName }}To', $data['{{ field.fieldName }}'])
             ;
             {%- elseif field.type == 'string' -%}
 
                 {%- if field.length <= 2 -%}
             $queryBuilder
-                ->andWhere($queryBuilder->expr()->eq('ck.{{ field.columnName }}', ':{{ field.columnName }}'))
-                ->setParameter('{{ field.columnName }}', $data['{{ field.columnName }}'])
+                ->andWhere($queryBuilder->expr()->eq('ck.{{ field.fieldName }}', ':{{ field.fieldName }}'))
+                ->setParameter('{{ field.fieldName }}', $data['{{ field.fieldName }}'])
             ;
 
                 {%- else -%}
             $queryBuilder
-                ->andWhere($queryBuilder->expr()->like('ck.{{ field.columnName }}', ':{{ field.columnName }}'))
-                ->setParameter('{{ field.columnName }}', "%{$data['{{ field.columnName }}']}%")
+                ->andWhere($queryBuilder->expr()->like('ck.{{ field.fieldName }}', ':{{ field.fieldName }}'))
+                ->setParameter('{{ field.fieldName }}', "%{$data['{{ field.fieldName }}']}%")
             ;
 
                 {%- endif %}
             {% else -%}
             $queryBuilder
-                ->andWhere($queryBuilder->expr()->eq('ck.{{ field.columnName }}', ':{{ field.columnName }}'))
-                ->setParameter('{{ field.columnName }}', $data['{{ field.columnName }}'])
+                ->andWhere($queryBuilder->expr()->eq('ck.{{ field.fieldName }}', ':{{ field.fieldName }}'))
+                ->setParameter('{{ field.fieldName }}', $data['{{ field.fieldName }}'])
             ;
 
             {%- endif %}
