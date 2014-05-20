@@ -38,7 +38,7 @@
 
         $pagination = $this->getPagination($query, $page);
 
-        $pagination->setUsedRoute('{{ entity | lower }}_paginator');
+        $pagination->setUsedRoute('{{ route_name_prefix }}_paginator');
 {% endblock method_body %}
 
 {% block method_return %}
