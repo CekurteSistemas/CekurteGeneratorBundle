@@ -113,7 +113,7 @@
                     {%- block container_messages_open_tag -%}<section class="messages">{%- endblock -%}
                         {%- block message -%}
                             {%- for flashMessage in app.session.flashbag.get('message') -%}
-                                {%- block container_alert_open_tag -%}<div class="alert alert-{%- if flashMessage.type == 'error' -%}danger{%- else -%}{{ flashMessage.type }}{%- endif -%} fade in">{%- endblock -%}
+                                {%- block container_alert_open_tag -%}<div class="alert alert-{%- if flashMessage.type == 'error' -%}danger{%- else -%}{{ flashMessage.type }}{%- endif %} fade in">{%- endblock -%}
                                     {%- block container_alert_button_close -%}<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>{%- endblock -%}
                                     {%- block container_alert_message -%}<strong>{{ flashMessage.type | trans | capitalize }}!</strong> {{ flashMessage.message | trans }}{%- endblock -%}
                                 {%- block container_alert_close_tag -%}</div>{%- endblock -%}
