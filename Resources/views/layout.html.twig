@@ -102,7 +102,7 @@
             {%- block container_page_header_open_tag -%}<div class="row page-header">{%- endblock -%}
                 {%- block container_page_header_h2_open_tag -%}<h2 class="pull-left">{%- endblock -%}
                     {%- block container_page_header_h2_title_open_tag -%}{{ title | trans }}{%- endblock -%}
-                    {%- block container_page_header_h2_subtitle_open_tag -%}<small>{%- if (subtitle is defined) -%}{{ subtitle | trans }}{%- endif -%}</small>{%- endblock -%}
+                    {%- block container_page_header_h2_subtitle_open_tag -%}<small>{%- if (subtitle is defined) %} {{ subtitle | trans }}{%- endif -%}</small>{%- endblock -%}
                 {%- block container_page_header_h2_close_tag -%}</h2>{%- endblock -%}
                 {%- block container_page_header_right_open_tag -%}<div class="btn-group pull-right">{%- endblock -%}
                     {%- block links -%}{%- endblock -%}
