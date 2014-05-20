@@ -95,6 +95,6 @@ class DoctrineFormGenerator extends Generator
             }
         }
 
-        return $fieldMappings;
+        return array_merge($metadata->associationMappings, $fieldMappings);
     }
 }

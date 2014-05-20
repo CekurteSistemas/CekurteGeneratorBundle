@@ -267,6 +267,6 @@ class DoctrineCrudGenerator extends Generator
             }
         }
 
-        return $fieldMappings;
+        return array_merge($this->metadata->associationMappings, $fieldMappings);
     }
 }
