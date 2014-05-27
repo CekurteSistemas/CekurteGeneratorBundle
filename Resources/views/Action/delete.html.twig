@@ -3,12 +3,12 @@
         {% include 'CekurteGeneratorBundle:Action:delete-modal.html.twig' %}
     {% endblock %}
     {% block container_open %}{% endblock %}
-        {% block form_open %}<form class="form-delete-inline{% if (show_label is defined) and (show_label == true) %} {{ 'form-delete' | trans }}{% endif %}" action="{{ path(route, {'id': id}) }}" method="post">{% endblock %}
+        {% block form_open %}<form class="form-delete-inline{% if (show_label is defined) and (show_label == true) %} {{ 'form-delete' | trans }}{% endif %}" action="{{ path(route, {(identifierKey) : identifierValue}) }}" method="post">{% endblock %}
             {% block method %}
                 <input type="hidden" name="_method" value="DELETE" />
             {% endblock %}
             {% block field %}
-                <input type="hidden" name="id" value="{{ id }}" />
+                <input type="hidden" name="identifierKey" value="{{ identifierValue }}" />
             {% endblock %}
             {% block token %}
                 <input type="hidden" name="form[_token]" value="{{ form._token.vars.value }}" />

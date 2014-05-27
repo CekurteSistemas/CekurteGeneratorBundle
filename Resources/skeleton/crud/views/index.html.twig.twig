@@ -50,7 +50,7 @@
             {%- for field, metadata in fields %}
                 {%- if loop.first and ('show' in actions) %}
 
-                    <td><a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'id': entity.id }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></td>
+                    <td><a href="{{ "{{ path('" ~ route_name_prefix ~ "_show', { 'identifierKey': 'id', 'identifierValue': entity.id }) }}" }}">{{ '{{ entity.' ~ field|replace({'_': ''}) ~ ' }}' }}</a></td>
 
                 {%- elseif field in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
 
@@ -95,19 +95,22 @@
                     {{ "{% if cekurte_is_granted('RETRIEVE') or cekurte_is_granted('UPDATE') or cekurte_is_granted('DELETE') %}" }}
                         <td>
                             {{ "{% embed 'CekurteGeneratorBundle:Action:retrieve.html.twig' with {
-                                'id'    : entity.id,
-                                'route' : '" ~ route_name_prefix ~ "_show'
+                                'route'             : '" ~ route_name_prefix ~ "_show'
+                                'identifierKey'     : 'id',
+                                'identifierValue'   : entity.id
                             } only %}
                             {% endembed  %}" }}
                             {{ "{% embed 'CekurteGeneratorBundle:Action:update.html.twig' with {
-                                'id'    : entity.id,
-                                'route' : '" ~ route_name_prefix ~ "_edit'
+                                'route' : '" ~ route_name_prefix ~ "_edit',
+                                'identifierKey'     : 'id',
+                                'identifierValue'   : entity.id
                             } only %}
                             {% endembed  %}" }}
                             {{ "{% embed 'CekurteGeneratorBundle:Action:delete.html.twig' with {
-                                'form'  : delete_form,
-                                'id'    : entity.id,
-                                'route' : '" ~ route_name_prefix ~ "_delete'
+                                'route'             : '" ~ route_name_prefix ~ "_delete',
+                                'identifierKey'     : 'id',
+                                'identifierValue'   : entity.id,
+                                'form'              : delete_form,
                             } only %}
                             {% endembed  %}" }}
                         </td>

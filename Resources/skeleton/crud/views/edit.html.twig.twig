@@ -16,10 +16,11 @@
     } only %}
     {% endembed %}" }}
     {{ "{% embed 'CekurteGeneratorBundle:Action:delete.html.twig' with {
-        'form'       : delete_form,
-        'id'         : entity.id,
-        'route'      : '" ~ route_name_prefix ~ "_delete',
-        'show_label' : true,
+        'route'             : '" ~ route_name_prefix ~ "_delete',
+        'identifierKey'     : 'id',
+        'identifierValue'   : entity.id,
+        'form'              : delete_form,
+        'show_label'        : true
     } only %}
     {% endembed %}" }}
 {{ "{% endblock %}" }}

@@ -12,9 +12,10 @@
     } only %}
     {% endembed %}" }}
     {{ "{% embed 'CekurteGeneratorBundle:Action:update.html.twig' with {
-        'id'         : entity.id,
-        'route'      : '" ~ route_name_prefix ~ "_edit',
-        'show_label' : true,
+        'route'             : '" ~ route_name_prefix ~ "_edit',
+        'identifierKey'     : 'id',
+        'identifierValue'   : entity.id,
+        'show_label'        : true
     } only %}
     {% endembed %}" }}
     {{ "{% embed 'CekurteGeneratorBundle:Action:create.html.twig' with {
@@ -22,10 +23,11 @@
     } only %}
     {% endembed %}" }}
     {{ "{% embed 'CekurteGeneratorBundle:Action:delete.html.twig' with {
-        'form'       : delete_form,
-        'id'         : entity.id,
-        'route'      : '" ~ route_name_prefix ~ "_delete',
-        'show_label' : true,
+        'route'             : '" ~ route_name_prefix ~ "_delete',
+        'identifierKey'     : 'id',
+        'identifierValue'   : entity.id,
+        'form'              : delete_form,
+        'show_label'        : true
     } only %}
     {% endembed %}" }}
 {{ "{% endblock %}" }}
