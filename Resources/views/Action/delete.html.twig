@@ -3,20 +3,20 @@
         {% include 'CekurteGeneratorBundle:Action:delete-modal.html.twig' %}
     {% endblock %}
     {% block container_open %}{% endblock %}
-        {% block form_open %}<form class="form-delete-inline{% if (show_label is defined) and (show_label == true) %} {{ 'form-delete' | trans }}{% endif %}" action="{{ path(route, { 'id': id }) }}" method="post">{% endblock %}
+        {% block form_open %}<form class="form-delete-inline{% if (show_label is defined) and (show_label == true) %} {{ 'form-delete' | trans }}{% endif %}" action="{{ path(route, {'id': id}) }}" method="post">{% endblock %}
             {% block method %}
                 <input type="hidden" name="_method" value="DELETE" />
             {% endblock %}
-            {% block id %}
+            {% block field %}
                 <input type="hidden" name="id" value="{{ id }}" />
             {% endblock %}
             {% block token %}
                 <input type="hidden" name="form[_token]" value="{{ form._token.vars.value }}" />
             {% endblock %}
             {% block action %}
-                <button type="submit" class="btn btn-danger" title="{% if (show_label is not defined) %}{{ 'Delete' | trans }}{% endif %}" data-target="#modalDelete" data-toggle="modal">
-                    {% block action_icon %}<span class="glyphicon glyphicon-remove"></span>{% endblock %} {% if (show_label is defined) and (show_label == true) %}{{ 'Delete' | trans }}{% endif %}
-                </button>
+                {% block action_open %}<button type="submit" class="btn btn-danger" title="{% if (show_label is not defined) %}{{ 'Delete' | trans }}{% endif %}" data-target="#modalDelete" data-toggle="modal">{% endblock %}
+                    {% block action_icon %}<span class="glyphicon glyphicon-remove"></span>{% endblock %} {% block action_label %}{% if (show_label is defined) and (show_label == true) %}{{ 'Delete' | trans }}{% endif %}{% endblock %}
+                {% block action_close %}</button>{% endblock %}
             {% endblock %}
         {% block form_close %}</form>{% endblock %}
     {% block container_close %}{% endblock %}

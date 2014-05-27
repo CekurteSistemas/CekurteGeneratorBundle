@@ -135,16 +135,17 @@ abstract class CekurteFormHandler
      * Remove um registro do banco de dados.
      *
      * @param string $entityName BundleName:Entity
+     * @param string $fieldName default: id
      *
      * @return boolean True se remover o registro, false do contrário
      */
-    public function delete($entityName)
+    public function delete($entityName, $fieldName = 'id')
     {
         if ($this->formIsValid()) {
 
-            $entity = $this->getManager()->getRepository($entityName)->find(
-                $this->getRequest()->request->get('id')
-            );
+            $entity = $this->getManager()->getRepository($entityName)->findOneBy(array(
+                $fieldName => $this->getRequest()->request->get($fieldName)
+            ));
 
             if (!$entity) {
 

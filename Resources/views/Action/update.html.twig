@@ -1,9 +1,9 @@
 {% if cekurte_is_granted('UPDATE') %}
     {% block container_open %}{% endblock %}
         {% block action %}
-            <a href="{{ path(route, { 'id': id }) }}" class="btn btn-default" title="{% if (show_label is not defined) %}{{ 'Edit' | trans }}{% endif %}">
-                {% block action_icon %}<span class="glyphicon glyphicon-pencil"></span>{% endblock %} {% if (show_label is defined) and (show_label == true) %}{{ 'Edit' | trans }}{% endif %}
-            </a>
+            {% block action_open %}<a href="{{ path(route, { 'id': id }) }}" class="btn btn-default" title="{% if (show_label is not defined) %}{{ 'Edit' | trans }}{% endif %}">{% endblock %}
+                {% block action_icon %}<span class="glyphicon glyphicon-pencil"></span>{% endblock %} {% block action_label %}{% if (show_label is defined) and (show_label == true) %}{{ 'Edit' | trans }}{% endif %}{% endblock %}
+            {% block action_close %}</a>{% endblock %}
         {% endblock %}
     {% block container_close %}{% endblock %}
 {% endif %}

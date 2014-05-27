@@ -1,33 +1,37 @@
 {% block container_open %}<div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="modalSearchLabel" aria-hidden="true">{% endblock %}
     {% block form_open %}<form>{% endblock %}
-        <div class="modal-dialog">
-            <div class="modal-content">
+        {% block dialog_open %}<div class="modal-dialog">{% endblock %}
+            {% block content_open %}<div class="modal-content">{% endblock %}
                 {% block header %}
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">{% block title %}{% endblock %}</h4>
-                    </div>
+                    {% block header_open %}<div class="modal-header">{% endblock %}
+                        {% block header_button_close %}<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>{% endblock %}
+                        {% block header_title_open %}<h4 class="modal-title">{% endblock %}{% block title %}{% endblock %}{% block header_title_close %}</h4>{% endblock %}
+                    {% block header_close %}</div>{% endblock %}
                 {% endblock %}
                 {% block body %}
-                    <div class="modal-body">
+                    {% block body_open %}<div class="modal-body">{% endblock %}
                         {% block content %}{% endblock %}
-                    </div>
+                    {% block body_close %}</div>{% endblock %}
                 {% endblock %}
                 {% block footer %}
-                    <div class="modal-footer">
-                        <div class="btn-group pull-right">
+                    {% block footer_open %}<div class="modal-footer">{% endblock %}
+                        {% block footer_group_open %}<div class="btn-group pull-right">{% endblock %}
                             {% block actions %}
                                 {% block action_close %}
-                                    <button type="reset" class="btn btn-default" data-dismiss="modal">{{ 'Close' | trans }}</button>
+                                    {% block action_close_open %}<button type="reset" class="btn btn-default" data-dismiss="modal">{% endblock %}
+                                        {% block action_close_label %}{{ 'Close' | trans }}{% endblock %}
+                                    {% block action_close_close %}</button>{% endblock %}
                                 {% endblock %}
                                 {% block action_submit %}
-                                    <button type="submit" class="btn btn-primary">{{ 'Search' | trans }}</button>
+                                    {% block action_submit_open %}<button type="submit" class="btn btn-primary">{% endblock %}
+                                        {% block action_submit_label %}{{ 'Search' | trans }}{% endblock %}
+                                    {% block action_submit_close %}</button>{% endblock %}
                                 {% endblock %}
                             {% endblock %}
-                        </div>
-                    </div>
+                        {% block footer_group_close %}</div>{% endblock %}
+                    {% block footer_close %}</div>{% endblock %}
                 {% endblock %}
-            </div>
-        </div>
+            {% block content_close %}</div>{% endblock %}
+        {% block dialog_close %}</div>{% endblock %}
     {% block form_close %}</form>{% endblock %}
 {% block container_close %}</div>{% endblock %}

@@ -1,16 +1,22 @@
 {% block container_open %}<div class="form-actions">{% endblock %}
-    <div class="col-lg-offset-2 col-lg-10">
-        <div class="btn-group">
+    {% block container_grid_open %}<div class="col-lg-offset-2 col-lg-10">{% endblock %}
+        {% block container_group_open %}<div class="btn-group">{% endblock %}
             {% block container_reset_open %}{% endblock %}
                 {% block action_reset %}
-                    <button type="reset" class="btn btn-default">{% block action_reset_icon %}<span class="glyphicon glyphicon-trash"></span>{% endblock %} {% block action_reset_label %}{{ 'Reset'|trans }}{% endblock %}</button>
+                    {% block action_reset_open %}<button type="reset" class="btn btn-default">{% endblock %}
+                        {% block action_reset_icon %}<span class="glyphicon glyphicon-trash"></span>{% endblock %}
+                        {% block action_reset_label %}{{ 'Reset'|trans }}{% endblock %}
+                    {% block action_reset_close %}</button>{% endblock %}
                 {% endblock %}
             {% block container_reset_close %}{% endblock %}
             {% block container_submit_open %}{% endblock %}
                 {% block action_submit %}
-                    <button type="submit" class="btn btn-primary">{% block action_submit_icon %}<span class="glyphicon glyphicon-floppy-disk"></span>{% endblock %} {% block action_submit_label %}{{ 'Save'|trans }}{% endblock %}</button>
+                    {% block action_submit_open %}<button type="submit" class="btn btn-primary">{% endblock %}
+                        {% block action_submit_icon %}<span class="glyphicon glyphicon-floppy-disk"></span>{% endblock %}
+                        {% block action_submit_label %}{{ 'Save'|trans }}{% endblock %}
+                    {% block action_submit_close %}</button>{% endblock %}
                 {% endblock %}
             {% block container_submit_close %}{% endblock %}
-        </div>
-    </div>
+        {% block container_group_close %}</div>{% endblock %}
+    {% block container_grid_close %}</div>{% endblock %}
 {% block container_close %}</div>{% endblock %}

@@ -1,12 +1,12 @@
 {% if cekurte_is_granted('LIST') %}
     {% block container_open %}{% endblock %}
         {% block action %}
-            <a href="{{ path(route, {
+            {% block action_open %}<a href="{{ path(route, {
                 'sort': app.request.attributes.get('sort'),
                 'direction': app.request.attributes.get('direction' )
-            }) }}" class="btn btn-default">
-                {% block action_icon %}<span class="glyphicon glyphicon-save"></span>{% endblock %} {{ 'Export' | trans }}
-            </a>
+            }) }}" class="btn btn-default">{% endblock %}
+                {% block action_icon %}<span class="glyphicon glyphicon-save"></span>{% endblock %} {% block action_label %}{{ 'Export' | trans }}{% endblock %}
+            {% block action_close %}</a>{% endblock %}
         {% endblock %}
     {% block container_close %}{% endblock %}
 {% endif %}
