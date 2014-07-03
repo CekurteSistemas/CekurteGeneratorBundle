@@ -83,23 +83,33 @@ class RoleExtension extends ContainerAwareTwigExtension
     /**
      * Verifica se um usuário possuí um papel para acessar um recurso da aplicação.
      *
-     * @param string $role
+     * @param string $specificRole
+     * @param string $genericRole
      *
      * @return boolean
      */
-    public function isGranted($role)
+    public function isGranted($specificRole, $genericRole = null)
     {
-        $role = (empty($role) or 'LIST' === strtoupper($role)) ? '' : self::ROLE_SEPARATOR . strtoupper($role);
-
-        $role = self::ROLE_PREFIX
-            . self::ROLE_SEPARATOR
-            . str_replace('\\', '', strtoupper($this->getBundleName()))
-            . self::ROLE_SEPARATOR
-            . strtoupper($this->getControllerName())
-            . $role
+        $specificRoleSuffix = (empty($specificRole) or 'LIST' === strtoupper($specificRole))
+            ? ''
+            : self::ROLE_SEPARATOR . strtoupper($specificRole)
         ;
 
-        return ($this->getSecurity()->isGranted($role) or $this->getSecurity()->isGranted($this->getRoleNameAdmin()));
+        $specificRoleFormatted = ''
+            . self::ROLE_PREFIX
+            . self::ROLE_SEPARATOR
+            . str_replace('\\', '', strtoupper($this->getBundleName()))
+            . 'BUNDLE'
+            . self::ROLE_SEPARATOR
+            . strtoupper($this->getControllerName())
+            . $specificRoleSuffix
+        ;
+
+        return $this->getSecurity()->isGranted($specificRoleFormatted)
+            or $this->getSecurity()->isGranted(
+                is_null($genericRole) ? $this->getRoleNameAdmin() : $genericRole
+            )
+        ;
     }
 
     /**
