@@ -51,19 +51,15 @@
 
                 {%- elseif metadata.type in ['date'] %}
 
-                    {%- if default_locale == 'pt_BR' -%}
-                        <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'d/m/Y\') }}' }}</td>
-                    {%- else -%}
-                        <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d\') }}' }}</td>
-                    {%- endif -%}
+                    <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|localizeddate(\'medium\', \'none\') }}' }}</td>
 
-                {%- elseif metadata.type in ['datetime'] %}
+                {%- elseif metadata.type in ['time'] %}
 
-                    {%- if default_locale == 'pt_BR' -%}
-                        <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'d/m/Y H:i:s\') }}' }}</td>
-                    {%- else -%}
-                        <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|date(\'Y-m-d H:i:s\') }}' }}</td>
-                    {%- endif -%}
+                    <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|localizeddate(\'none\', \'medium\') }}' }}</td>
+
+                {%- elseif metadata.type in ['datetime', 'datetimetz'] %}
+
+                    <td>{{ '{{ entity.' ~ field|replace({'_': ''}) ~ '|localizeddate(\'medium\', \'medium\') }}' }}</td>
 
                 {%- elseif metadata.type in ['text'] %}
 
