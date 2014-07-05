@@ -119,7 +119,7 @@ abstract class CekurteFormHandler
 
             $this->getFlashBag()->add('message', array(
                 'type'      => 'success',
-                'message'   => sprintf('The record has been %s successfully.', $data->getId() ? 'updated ' : 'created'),
+                'message'   => sprintf('The record has been %s successfully.', $data->getId() ? 'updated' : 'created'),
             ));
 
             $this->getManager()->persist($data);
