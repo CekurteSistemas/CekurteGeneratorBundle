@@ -23,11 +23,19 @@ class DoctrineSubscriber extends ContainerAware implements EventSubscriber
      */
     protected $container;
 
+    /**
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
+    /**
+     * Get subscribed events
+     *
+     * @return array
+     */
     public function getSubscribedEvents()
     {
         return array(
@@ -38,6 +46,8 @@ class DoctrineSubscriber extends ContainerAware implements EventSubscriber
     }
 
     /**
+     * Get a Request instance
+     *
      * @return Request
      */
     public function getRequest()
