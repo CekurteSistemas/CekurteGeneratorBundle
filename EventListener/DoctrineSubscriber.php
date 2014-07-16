@@ -56,17 +56,36 @@ class DoctrineSubscriber extends ContainerAware implements EventSubscriber
     }
 
     /**
+     * Verify if the method exist on object
+     *
+     * @param mixed $object
+     * @param string $methodName
+     *
+     * @return bool
+     */
+    protected function methodExists($object, $methodName)
+    {
+        return method_exists(get_class($object), $methodName);
+    }
+
+    /**
      * On PRE_PERSIST event
      *
      * @param LifecycleEventArgs $args
      */
     public function prePersist(LifecycleEventArgs $args)
     {
-        $args->getEntity()
-            ->setDeleted(false)
-            ->setCreatedAt(new \DateTime())
-            ->setCreatedBy($this->getUser())
-        ;
+        if ($this->methodExists($args->getEntity(), 'setDeleted')) {
+            $args->getEntity()->setDeleted(false);
+        }
+
+        if ($this->methodExists($args->getEntity(), 'setCreatedAt')) {
+            $args->getEntity()->setCreatedAt(new \DateTime());
+        }
+
+        if ($this->methodExists($args->getEntity(), 'setCreatedBy')) {
+            $args->getEntity()->setCreatedBy($this->getUser());
+        }
     }
 
     /**
@@ -84,10 +103,13 @@ class DoctrineSubscriber extends ContainerAware implements EventSubscriber
             return;
         }
 
-        $args->getEntity()
-            ->setUpdatedAt(new \DateTime())
-            ->setUpdatedBy($this->getUser())
-        ;
+        if ($this->methodExists($args->getEntity(), 'setUpdatedAt')) {
+            $args->getEntity()->setUpdatedAt(new \DateTime());
+        }
+
+        if ($this->methodExists($args->getEntity(), 'setUpdatedBy')) {
+            $args->getEntity()->setUpdatedBy($this->getUser());
+        }
     }
 
     /**
@@ -97,17 +119,23 @@ class DoctrineSubscriber extends ContainerAware implements EventSubscriber
      */
     public function preRemove(LifecycleEventArgs $args)
     {
-        $entity = $args->getEntity()
-            ->setDeleted(true)
-            ->setDeletedAt(new \DateTime())
-            ->setDeletedBy($this->getUser())
-        ;
+        if ($this->methodExists($args->getEntity(), 'setDeleted')) {
+            $args->getEntity()->setDeleted(true);
+        }
+
+        if ($this->methodExists($args->getEntity(), 'setDeletedAt')) {
+            $args->getEntity()->setDeletedAt(new \DateTime());
+        }
+
+        if ($this->methodExists($args->getEntity(), 'setDeletedBy')) {
+            $args->getEntity()->setDeletedBy($this->getUser());
+        }
 
         $entityManager = $args->getEntityManager();
 
-        $entityManager->persist($entity);
+        $entityManager->persist($args->getEntity());
         $entityManager->flush();
 
-        $entityManager->detach($entity);
+        $entityManager->detach($args->getEntity());
     }
 }
