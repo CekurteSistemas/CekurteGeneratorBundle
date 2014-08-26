@@ -2,6 +2,8 @@
 {{ "{% extends 'CekurteGeneratorBundle::layout.html.twig' %}" }}
 {% endblock extends %}
 
+{%- set hasDateField = false %}
+
 {% block body %}
 {{ "{% set title    = '" ~ entity ~ "'|trans %}" }}
 {{ "{% set subtitle = '" ~ 'Edit' ~ "'|trans %}" }}
@@ -54,8 +56,15 @@
         'endpoint': '" ~ entity|lower ~ "_" ~ field.fieldName ~ "'
     } %}" }}
 
+        {%- elseif field.type in ['date'] %}
+            {% set hasDateField = true %}
         {%- endif %}
     {% endfor %}
+
+    {% if hasDateField == true -%}
+    {{ "<script type=\"text/javascript\" src=\"{{ asset('vendor/bootstrap-datepicker/js/bootstrap-datepicker.js') }}\"></script>" }}
+    {{ "<script type=\"text/javascript\" src=\"{{ asset('vendor/bootstrap-datepicker/js/locales/bootstrap-datepicker.' ~ app.request.locale|replace({'_': '-'}) ~ '.js') }}\"></script>" }}
+    {%- endif %}
 
 {{ "{%- endblock -%}" }}
 {% endblock body %}

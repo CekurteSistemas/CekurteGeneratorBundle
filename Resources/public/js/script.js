@@ -1,10 +1,10 @@
 jQuery(document).ready(function($) {
 
     /**
-    * --------------------------------------------------------------------------
-    * Pergunta ao usuário se ele deseja realmente remover um registro da base de
-    * dados
-    */
+     * --------------------------------------------------------------------------
+     * Pergunta ao usuário se ele deseja realmente remover um registro da base de
+     * dados
+     */
 
     $('button[data-target="#modalDelete"]').on('click', function(event) {
 
@@ -21,10 +21,17 @@ jQuery(document).ready(function($) {
     });
 
     /**
-    * --------------------------------------------------------------------------
-    * Habilita o Tooltip do Twitter Bootstrap
-    */
+     * --------------------------------------------------------------------------
+     * Habilita o Tooltip do Twitter Bootstrap
+     */
 
     $('a, button[title]').tooltip({});
+
+    /**
+     * --------------------------------------------------------------------------
+     * Date picker
+     */
+
+    $('.datepicker').datepicker({});
 
 });
