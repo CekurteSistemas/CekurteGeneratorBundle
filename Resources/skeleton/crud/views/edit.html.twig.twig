@@ -33,7 +33,7 @@
         {{ "{{ form_widget(edit_form) }}" }}
         {{ "{% include 'CekurteGeneratorBundle:Action:form-actions.html.twig' %}" }}
     </form>
-    {% for field in fields %}
+    {%- for field in fields %}
         {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
 
     {{ "{% include 'CekurteUploaderBundle:TwitterBootstrap3:layout.html.twig' with {
@@ -43,27 +43,43 @@
     } %}" }}
 
         {%- endif %}
-    {% endfor %}
+    {%- endfor %}
 
 {{ "{% endblock %}" }}
+
+{%- for field in fields -%}
+    {%- if field.type in ['date'] -%}
+        {%- set hasDateField = true -%}
+    {%- endif -%}
+{%- endfor %}
+
+
+{{ "{%- block stylesheets -%}" }}
+    {{ "{{ parent() }}" }}
+
+    {% if hasDateField == true -%}
+    {{ "<link rel=\"stylesheet\" type=\"text/css\" href=\"{{ asset('vendor/bootstrap-datepicker/css/datepicker3.css') }}\" />" }}
+    {%- endif %}
+
+{{ "{%- endblock -%}" }}
 
 {{ "{%- block javascripts -%}" }}
     {{ "{{ parent() }}" }}
     {% for field in fields %}
         {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
 
-    {{ "{% include 'CekurteUploaderBundle:TwitterBootstrap3:script.html.twig' with {
+    {{ "{%- include 'CekurteUploaderBundle:TwitterBootstrap3:script.html.twig' with {
         'endpoint': '" ~ entity|lower ~ "_" ~ field.fieldName ~ "'
-    } %}" }}
+    } -%}" }}
 
-        {%- elseif field.type in ['date'] %}
-            {% set hasDateField = true %}
-        {%- endif %}
+        {%- endif -%}
     {% endfor %}
 
     {% if hasDateField == true -%}
     {{ "<script type=\"text/javascript\" src=\"{{ asset('vendor/bootstrap-datepicker/js/bootstrap-datepicker.js') }}\"></script>" }}
-    {{ "<script type=\"text/javascript\" src=\"{{ asset('vendor/bootstrap-datepicker/js/locales/bootstrap-datepicker.' ~ app.request.locale|replace({'_': '-'}) ~ '.js') }}\"></script>" }}
+    {{ "{%- if app.request.locale != 'en_US' -%}" }}
+        {{ "<script type=\"text/javascript\" src=\"{{ asset('vendor/bootstrap-datepicker/js/locales/bootstrap-datepicker.' ~ app.request.locale|replace({'_': '-'}) ~ '.js') }}\"></script>" }}
+    {{ "{%- endif -%}" }}
     {%- endif %}
 
 {{ "{%- endblock -%}" }}
