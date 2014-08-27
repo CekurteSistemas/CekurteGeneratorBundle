@@ -1,0 +1,13 @@
+{% extends 'CekurteGeneratorBundle::modal.html.twig' %}
+
+{% block title -%}{{ 'Import' | trans }}{% endblock %}
+
+{% block form_open -%}
+    <form class="form-horizontal" role="form" action="{{ path('cekurte_generator_table', {'table': table}) }}" method="post">
+{% endblock %}
+
+{% block content -%}
+    {{ form_widget(form) }}
+{% endblock %}
+
+{% block action_submit_label %}{{ 'Import' | trans }}{% endblock %}
