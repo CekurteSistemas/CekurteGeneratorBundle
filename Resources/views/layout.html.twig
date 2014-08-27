@@ -9,8 +9,8 @@
 
     {%- block title_open_tag -%}<title>{%- endblock -%}
     {%- block title -%}
-        {%- if (title is defined) -%}{{ title | trans }} {%- block title_separator -%} - {%- endblock -%} {%- endif -%}
-        {%- if (subtitle is defined) -%}{{ subtitle | trans }}{%- endif -%}
+        {%- if (title is defined) -%}{{ title | trans }}{%- endif -%}
+        {%- if (subtitle is defined) -%} {%- block title_separator %} - {% endblock -%} {{ subtitle | trans }}{%- endif -%}
     {%- endblock -%}
     {%- block title_close_tag -%}</title>{%- endblock -%}
 

@@ -121,4 +121,35 @@
         </table>
     </div>
 {{ "{% endblock %}" }}
-{% endblock body %}
+
+{%- set hasDateField = false -%}
+
+{%- for field in fields -%}
+    {%- if field.type in ['date'] -%}
+        {%- set hasDateField = true -%}
+    {%- endif -%}
+{%- endfor %}
+
+{%- if hasDateField == true -%}
+{{ "\n" }}
+{{ "{%- block stylesheets -%}" }}
+    {{ "{{ parent() }}" }}
+
+    {{ "{%- include 'CekurteGeneratorBundle:DatePicker:style.html.twig' -%}" }}
+{{ "{%- endblock -%}" }}
+{%- endif -%}
+
+{%- if hasDateField == true -%}
+{{ "\n" }}
+{{ "{%- block javascripts -%}" }}
+    {{ "{{ parent() }}" }}
+
+    {%- if hasDateField == true -%}
+    {{ "\n" }}
+    {{ "{%- include 'CekurteGeneratorBundle:DatePicker:script.html.twig' -%}" }}
+    {%- endif -%}
+{{ "\n" ~ "{%- endblock -%}" }}
+
+{%- endif -%}
+{{ "\n" }}
+{%- endblock body %}

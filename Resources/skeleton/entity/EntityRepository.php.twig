@@ -24,23 +24,33 @@ class {{ entity_class }}Repository extends EntityRepository
      * @param {{ entity_class }} $entity
      * @param string $sort
      * @param string $direction
+     * @param array $additionalFields
      * @return \Doctrine\ORM\Query
 {% include 'crud/actions/author.php.twig' %}
      */
-    public function getQuery({{ entity_class }} $entity, $sort, $direction)
+    public function getQuery({{ entity_class }} $entity, $sort, $direction, $additionalFields = array())
     {
         $queryBuilder = $this->createQueryBuilder('ck');
 
-        $data = array(
+        $entityFields = array(
     {% for field in fields %}
+        {%- if field.type not in ['date', 'time', 'datetime', 'datetimetz'] %}
         '{{ field.fieldName }}' => $entity->get{{ field.fieldName|first|upper }}{{ field.fieldName|slice(1) }}(),
+        {% endif -%}
     {% endfor %}
-    );
+);
+
+        $data = array_merge($additionalFields, $entityFields);
 
         {%- for field in fields %}
 
-
+            {{ "\n" }}
+            {%- if field.type in ['date', 'time', 'datetime', 'datetimetz'] %}
+        if (!empty($data['{{ field.fieldName }}From']) and !empty($data['{{ field.fieldName }}To'])) {
+            {%- else %}
         if (!empty($data['{{ field.fieldName }}'])) {
+            {%- endif -%}
+            {{ "\n" }}
             {% if field.type in ['date', 'time', 'datetime', 'datetimetz'] -%}
             $queryBuilder
                 ->andWhere($queryBuilder->expr()->between(
@@ -48,8 +58,8 @@ class {{ entity_class }}Repository extends EntityRepository
                     ':{{ field.fieldName }}From',
                     ':{{ field.fieldName }}To'
                 ))
-                ->setParameter('{{ field.fieldName }}From', $data['{{ field.fieldName }}'])
-                ->setParameter('{{ field.fieldName }}To', $data['{{ field.fieldName }}'])
+                ->setParameter('{{ field.fieldName }}From', $data['{{ field.fieldName }}From'])
+                ->setParameter('{{ field.fieldName }}To', $data['{{ field.fieldName }}To'])
             ;
             {%- elseif field.type == 'text' -%}
             $queryBuilder

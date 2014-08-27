@@ -28,12 +28,37 @@ class {{ form_class }} extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if ($options['search'] === true) {
-            {% for field in fields %}
-
+            {% for field in fields -%}
+                {{ "\n" }}
+                {%- if field.type != 'text' or field.fieldName not in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] -%}
+                    {% if field.type in ['date'] %}
+            $builder->add('{{ field.fieldName }}From', 'date', array(
+                'mapped'    => false,
+                'required'  => false,
+                'widget'    => 'single_text',
+                'format'    => $this->getDatePattern(),
+                'attr'      => array(
+                    'class'             => 'datepicker',
+                    'data-date-format'  => $this->getDateWidgetPattern(),
+                    'data-date-language'=> $this->getDateLanguage(),
+                ),
+            ));
+            $builder->add('{{ field.fieldName }}To', 'date', array(
+                'mapped'    => false,
+                'required'  => false,
+                'widget'    => 'single_text',
+                'format'    => $this->getDatePattern(),
+                'attr'      => array(
+                    'class'             => 'datepicker',
+                    'data-date-format'  => $this->getDateWidgetPattern(),
+                    'data-date-language'=> $this->getDateLanguage(),
+                ),
+            ));
+                    {% else %}
             $builder->add('{{ field.fieldName }}')->setRequired(false);
-
+                    {% endif %}
+                {%- endif -%}
             {%- endfor %}
-
 
         } else {
 
@@ -61,7 +86,7 @@ class {{ form_class }} extends AbstractType
                         'class'             => 'datepicker',
                         'data-date-format'  => $this->getDateWidgetPattern(),
                         'data-date-language'=> $this->getDateLanguage(),
-                    )
+                    ),
                 ))
                 {%- else -%}
                 ->add('{{ field.fieldName }}')

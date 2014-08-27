@@ -2,8 +2,6 @@
 {{ "{% extends 'CekurteGeneratorBundle::layout.html.twig' %}" }}
 {% endblock extends %}
 
-{%- set hasDateField = false %}
-
 {% block body %}
 {{ "{% set title    = '" ~ entity ~ "'|trans %}" }}
 {{ "{% set subtitle = '" ~ 'Add' ~ "'|trans %}" }}
@@ -33,40 +31,48 @@
 
 {{ "{% endblock %}" }}
 
+{%- set hasDateField    = false -%}
+{%- set hasUploadField  = false -%}
+
 {%- for field in fields -%}
     {%- if field.type in ['date'] -%}
-        {%- set hasDateField = true -%}
+        {%- set hasDateField    = true -%}
+    {%- elseif field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] -%}
+        {%- set hasUploadField  = true -%}
     {%- endif -%}
 {%- endfor %}
 
-
+{%- if hasDateField == true -%}
+{{ "\n" }}
 {{ "{%- block stylesheets -%}" }}
     {{ "{{ parent() }}" }}
 
-    {% if hasDateField == true -%}
-    {{ "<link rel=\"stylesheet\" type=\"text/css\" href=\"{{ asset('vendor/bootstrap-datepicker/css/datepicker3.css') }}\" />" }}
-    {%- endif %}
-
+    {{ "{%- include 'CekurteGeneratorBundle:DatePicker:style.html.twig' -%}" }}
 {{ "{%- endblock -%}" }}
+{%- endif -%}
 
+{%- if hasDateField == true or hasUploadField == true -%}
+{{ "\n" }}
 {{ "{%- block javascripts -%}" }}
     {{ "{{ parent() }}" }}
-    {% for field in fields %}
-        {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
 
+    {%- if hasDateField == true -%}
+    {{ "\n" }}
+    {{ "{%- include 'CekurteGeneratorBundle:DatePicker:script.html.twig' -%}" }}
+    {%- endif -%}
+
+    {%- if hasUploadField == true -%}
+        {%- for field in fields -%}
+            {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] -%}
+    {{ "\n" }}
     {{ "{%- include 'CekurteUploaderBundle:TwitterBootstrap3:script.html.twig' with {
         'endpoint': '" ~ entity|lower ~ "_" ~ field.fieldName ~ "'
     } -%}" }}
+            {%- endif -%}
+        {% endfor -%}
+    {%- endif -%}
+{{ "\n" ~ "{%- endblock -%}" }}
 
-        {%- endif -%}
-    {% endfor %}
-
-    {% if hasDateField == true -%}
-    {{ "<script type=\"text/javascript\" src=\"{{ asset('vendor/bootstrap-datepicker/js/bootstrap-datepicker.js') }}\"></script>" }}
-    {{ "{%- if app.request.locale != 'en_US' -%}" }}
-        {{ "<script type=\"text/javascript\" src=\"{{ asset('vendor/bootstrap-datepicker/js/locales/bootstrap-datepicker.' ~ app.request.locale|replace({'_': '-'}) ~ '.js') }}\"></script>" }}
-    {{ "{%- endif -%}" }}
-    {%- endif %}
-
-{{ "{%- endblock -%}" }}
-{% endblock body %}
+{%- endif -%}
+{{ "\n" }}
+{%- endblock body %}

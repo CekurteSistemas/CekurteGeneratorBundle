@@ -34,8 +34,31 @@
             $form->bind($this->get('session')->get('search_{{ entity | lower }}'));
         }
 
-        $query = $this->getEntityRepository()->getQuery($form->getData(), $sort, $direction);
+{%- set hasDateField = false -%}
 
+{%- for field in fields -%}
+    {%- if field.type in ['date'] -%}
+        {%- set hasDateField = true -%}
+    {%- endif -%}
+{%- endfor -%}
+
+{%- if hasDateField == false -%}
+        {{ "\n" }}
+        $query = $this->getEntityRepository()->getQuery($form->getData(), $sort, $direction);
+{%- else -%}
+        {{ "\n" }}
+        $query = $this->getEntityRepository()->getQuery($form->getData(), $sort, $direction, array(
+        {%- for field in fields -%}
+            {%- if field.type in ['date'] -%}
+                {% if not loop.first %}{{ "\n" }}{% endif %}
+            '{{ field.fieldName }}From' => $form->get('{{ field.fieldName }}From')->getData(),
+            '{{ field.fieldName }}To'   => $form->get('{{ field.fieldName }}To')->getData(),
+            {%- endif -%}
+        {%- endfor %}
+
+        ));
+{%- endif -%}
+        {{ "\n" }}
         $pagination = $this->getPagination($query, $page);
 
         $pagination->setUsedRoute('{{ route_name_prefix }}_paginator');
