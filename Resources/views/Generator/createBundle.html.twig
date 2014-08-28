@@ -1,0 +1,31 @@
+{% extends 'CekurteGeneratorBundle::layout.html.twig' %}
+
+{% set title    = 'Generator'|trans %}
+{% set subtitle = 'Create Bundle'|trans %}
+
+{% block search -%}{% endblock %}
+
+{% block links -%}
+    <a href="{{ path('cekurte_generator') }}" class="btn btn-default">
+        <span class="glyphicon glyphicon-list"></span> {{ 'List' | trans }}
+    </a>
+{% endblock %}
+
+{% block links_footer -%}{% endblock %}
+
+{% block content -%}
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>{{ 'Bundle'|trans }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in bundles %}
+            <tr>
+                <td>{{ item }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

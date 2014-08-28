@@ -7,12 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Import table from database type.
+ * Create bundle type.
  *
  * @author João Paulo Cercal <sistemas@cekurte.com>
  * @version 0.1
  */
-class FormImportTableFromDatabaseType extends AbstractType
+class FormCreateBundleType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -23,15 +23,17 @@ class FormImportTableFromDatabaseType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('mappingType', 'choice', array(
+            ->add('namespace', 'text', array(
+                'required' => true,
+            ))
+            ->add('format', 'choice', array(
+                'required'  => true,
                 'choices'   => array(
                     'Annotation'    => 'Annotation',
+                    'PHP'           => 'PHP',
                     'XML'           => 'XML',
                     'YML'           => 'YML',
                 ),
-            ))
-            ->add('bundle', 'choice', array(
-                'choices'   => $options['registeredBundles'],
             ))
         ;
     }
@@ -44,9 +46,7 @@ class FormImportTableFromDatabaseType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-            'registeredBundles' => array(),
-        ));
+
     }
 
     /**
@@ -57,6 +57,6 @@ class FormImportTableFromDatabaseType extends AbstractType
      */
     public function getName()
     {
-        return 'cekurte_generatorbundle_import_table_from_database';
+        return 'cekurte_generatorbundle_create_bundle';
     }
 }

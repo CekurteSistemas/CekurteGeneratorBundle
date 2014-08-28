@@ -2,6 +2,7 @@
 
 namespace Cekurte\GeneratorBundle\Controller;
 
+use Cekurte\GeneratorBundle\Form\Type\FormCreateBundleType;
 use Cekurte\GeneratorBundle\Form\Type\FormImportTableFromDatabaseType;
 use Doctrine\Bundle\DoctrineBundle\Command\ImportMappingDoctrineCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -51,7 +52,7 @@ class GeneratorController extends CekurteController
     /**
      * Finds and displays a setup to generate crud.
      *
-     * @Route("/bundle/{bundle}/entity/{entity}/", name="cekurte_generator_bundle_entity_show")
+     * @Route("/bundle/{bundle}/entity/{entity}/", name="cekurte_generator_bundle_entity")
      * @Method("GET")
      * @Template()
      * @Secure(roles="ROLE_CEKURTEGENERATORBUNDLE, ROLE_SUPER_ADMIN")
@@ -92,7 +93,7 @@ class GeneratorController extends CekurteController
     public function showTableAction(Request $request, $table)
     {
         $form = $this->createForm(new FormImportTableFromDatabaseType(), null, array(
-            'registeredBundles' => $this->get('kernel')->getBundles()
+            'registeredBundles' => $this->getBundles()
         ));
 
         if ($request->isMethod('POST')) {
@@ -131,6 +132,85 @@ class GeneratorController extends CekurteController
             'fields'    => $this->getColumnsFromTableName($table),
             'form'      => $form->createView(),
         );
+    }
+
+    /**
+     * Finds and displays a columns from table.
+     *
+     * @Route("/bundle", name="cekurte_generator_bundle")
+     * @Method({"GET", "POST"})
+     * @Template()
+     * @Secure(roles="ROLE_CEKURTEGENERATORBUNDLE, ROLE_SUPER_ADMIN")
+     *
+     * @param Request $request
+     *
+     * @return array|Response
+     *
+     * @author João Paulo Cercal <sistemas@cekurte.com>
+     * @version 0.1
+     */
+    public function createBundleAction(Request $request)
+    {
+        $form = $this->createForm(new FormCreateBundleType());
+
+        if ($request->isMethod('POST')) {
+
+            $form->bind($request);
+
+            $application    = $this->getApplication();
+
+            $output         = new NullOutput();
+
+            $input          = new ArrayInput(array(
+                'command'           => 'generate:bundle',
+                '--namespace'       => $form->get('namespace')->getData(),
+                '--format'          => strtolower($form->get('format')->getData()),
+                '--structure'       => true,
+                '--no-interaction'  => true,
+            ));
+
+            $resultCode = $application->run($input, $output);
+
+            var_dump($resultCode);
+            exit;
+
+            $tableImported = $form->isValid();
+
+            $this->get('session')->getFlashBag()->add('message', array(
+                'type'      => $tableImported ? 'success' : 'error',
+                'message'   => $tableImported
+                        ? $this->get('translator')->trans('Table imported with successfully')
+                        : $this->get('translator')->trans('The table was not imported'),
+            ));
+        }
+
+        return array(
+            'bundles'   => $this->getBundles(),
+            'form'      => $form->createView(),
+        );
+    }
+
+    /**
+     * Get the registered bundles
+     *
+     * @return array
+     *
+     * @author João Paulo Cercal <sistemas@cekurte.com>
+     * @version 0.1
+     */
+    protected function getBundles()
+    {
+        $bundles = array_keys($this->get('kernel')->getBundles());
+
+        sort($bundles);
+
+        $data = array();
+
+        foreach ($bundles as $item) {
+            $data[$item] = $item;
+        }
+
+        return $data;
     }
 
     /**
