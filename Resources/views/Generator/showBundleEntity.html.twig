@@ -9,6 +9,11 @@
     <a href="{{ path('cekurte_generator') }}" class="btn btn-default">
         <span class="glyphicon glyphicon-list"></span> {{ 'List' | trans }}
     </a>
+    <form class="form-delete-inline" action="{{ path('cekurte_generator_bundle_generate_entities', {'bundle': bundle, 'entity': entity}) }}" method="post">
+        <button type="submit" class="btn btn-danger" title="{{ 'Generate Entities'|trans }}" style="border-top-left-radius: 0px; border-bottom-left-radius: 0px;">
+            <span class="glyphicon glyphicon-remove"></span> {{ 'Generate Entities' | trans }}
+        </button>
+    </form>
 {% endblock %}
 
 {% block links_footer -%}{% endblock %}

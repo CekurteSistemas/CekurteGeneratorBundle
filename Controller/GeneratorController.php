@@ -20,7 +20,10 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\StreamOutput;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Process\Process;
 
 /**
  * Generator Controller.
@@ -79,6 +82,70 @@ class GeneratorController extends CekurteController
     }
 
     /**
+     * Generate the methods setters and getters to entity.
+     *
+     * @Route("/bundle/{bundle}/entity/{entity}/generate/entities", name="cekurte_generator_bundle_generate_entities")
+     * @Method("POST")
+     * @Secure(roles="ROLE_CEKURTEGENERATORBUNDLE, ROLE_SUPER_ADMIN")
+     *
+     * @param string $bundle
+     * @param string $entity
+     *
+     * @return RedirectResponse
+     *
+     * @author João Paulo Cercal <sistemas@cekurte.com>
+     * @version 0.1
+     */
+    public function generateEntitiesAction($bundle, $entity)
+    {
+        $input = new ArrayInput($params = array(
+            'command'           => 'doctrine:generate:entities',
+            'name'              => $bundle . ':' . $entity,
+            '--no-interaction',
+        ));
+
+        $process = $this->getProcess($input);
+
+        $process->run();
+
+        while ($process->isRunning()) {
+            // ...
+        }
+
+        $flashBag = $this->get('session')->getFlashBag();
+
+        if ($process->isSuccessful()) {
+
+            $flashBag->add('commandOutput', array(
+                'type'      => 'success',
+                'message'   => $process->getOutput(),
+            ));
+
+            $flashBag->add('message', array(
+                'type'      => 'success',
+                'message'   => $this->get('translator')->trans('Entities generated with successfully'),
+            ));
+
+        } else {
+
+            $flashBag->add('commandOutput', array(
+                'type'      => 'error',
+                'message'   => $process->getErrorOutput(),
+            ));
+
+            $flashBag->add('message', array(
+                'type'      => 'error',
+                'message'   => $this->get('translator')->trans('The entities was not generated'),
+            ));
+        }
+
+        return $this->redirect($this->generateUrl('cekurte_generator_bundle_entity', array(
+            'bundle'    => $bundle,
+            'entity'    => $entity,
+        )));
+    }
+
+    /**
      * Finds and displays a columns from table.
      *
      * @Route("/table/{table}/", name="cekurte_generator_table")
@@ -104,31 +171,51 @@ class GeneratorController extends CekurteController
 
             $form->bind($request);
 
-            $application    = $this->getApplication();
+            if ($form->isValid()) {
 
-            $output         = new NullOutput();
+                $input = new ArrayInput($params = array(
+                    'command'           => 'doctrine:mapping:import',
+                    'bundle'            => $form->get('bundle')->getData(),
+                    'mapping-type'      => strtolower($form->get('mappingType')->getData()),
+                    '--filter'          => $this->getFilteredTableName($table),
+                    '--force',
+                ));
 
-            $input          = new ArrayInput(array(
-                'command'           => 'doctrine:mapping:import',
-                'bundle'            => $form->get('bundle')->getData(),
-                'mapping-type'      => strtolower($form->get('mappingType')->getData()),
-                '--filter'          => $this->getFilteredTableName($table),
-                '--force'           => true,
-            ));
+                $process = $this->getProcess($input);
 
-            $resultCode = $application->run($input, $output);
+                $process->run();
 
-            var_dump($resultCode);
-            exit;
+                while ($process->isRunning()) {
+                    // ...
+                }
 
-            $tableImported = $form->isValid();
+                $flashBag = $this->get('session')->getFlashBag();
 
-            $this->get('session')->getFlashBag()->add('message', array(
-                'type'      => $tableImported ? 'success' : 'error',
-                'message'   => $tableImported
-                    ? $this->get('translator')->trans('Table imported with successfully')
-                    : $this->get('translator')->trans('The table was not imported'),
-            ));
+                if ($process->isSuccessful()) {
+
+                    $flashBag->add('commandOutput', array(
+                        'type'      => 'success',
+                        'message'   => $process->getOutput(),
+                    ));
+
+                    $flashBag->add('message', array(
+                        'type'      => 'success',
+                        'message'   => $this->get('translator')->trans('Table imported with successfully'),
+                    ));
+
+                } else {
+
+                    $flashBag->add('commandOutput', array(
+                        'type'      => 'error',
+                        'message'   => $process->getErrorOutput(),
+                    ));
+
+                    $flashBag->add('message', array(
+                        'type'      => 'error',
+                        'message'   => $this->get('translator')->trans('The table was not imported'),
+                    ));
+                }
+            }
         }
 
         return array(
@@ -163,11 +250,9 @@ class GeneratorController extends CekurteController
 
             if ($form->isValid()) {
 
-                $application    = $this->getApplication();
+                $redirect = $this->redirect($this->generateUrl('cekurte_generator_bundle'));
 
-                $output         = new BufferedOutput();
-
-                $input          = new ArrayInput($params = array(
+                $input = new ArrayInput($params = array(
                     'command'           => 'generate:bundle',
                     '--namespace'       => str_replace('/', '\\', $form->get('namespace')->getData()),
                     '--format'          => strtolower($form->get('format')->getData()),
@@ -175,43 +260,81 @@ class GeneratorController extends CekurteController
                     '--no-interaction',
                 ));
 
-                $resultCode = $application->run($input, $output);
-            }
+                $process = $this->getProcess($input);
 
-            $bundleGenerated = isset($resultCode) ? ($resultCode === 0 ? true : false) : false;
+                $process->run();
 
-            $flashBag = $this->get('session')->getFlashBag();
+                while ($process->isRunning()) {
+                    // ...
+                }
 
-            if ($bundleGenerated === true) {
+                $flashBag = $this->get('session')->getFlashBag();
+
+                if ($process->isSuccessful()) {
+
+                    $flashBag->add('commandOutput', array(
+                        'type'      => 'success',
+                        'message'   => $process->getOutput(),
+                    ));
+
+                    $flashBag->add('message', array(
+                        'type'      => 'success',
+                        'message'   => $this->get('translator')->trans('Bundle generated with successfully'),
+                    ));
+
+                    sleep(5);
+
+                    return $redirect;
+                }
 
                 $flashBag->add('commandOutput', array(
-                    'type'      => 'success',
-                    'message'   => $output->fetch(),
+                    'type'      => 'error',
+                    'message'   => $process->getErrorOutput(),
                 ));
 
                 $flashBag->add('message', array(
-                    'type'      => 'success',
-                    'message'   => $this->get('translator')->trans('Bundle generated with successfully'),
+                    'type'      => 'error',
+                    'message'   => $this->get('translator')->trans('The bundle was not generated'),
                 ));
-
-                return $this->redirect($this->generateUrl('cekurte_generator_bundle'));
             }
-
-            $flashBag->add('commandOutput', array(
-                'type'      => 'error',
-                'message'   => $output->fetch(),
-            ));
-
-            $flashBag->add('message', array(
-                'type'      => 'error',
-                'message'   => $this->get('translator')->trans('The bundle was not generated'),
-            ));
         }
 
         return array(
             'bundles'   => $this->getBundles(),
             'form'      => $form->createView(),
         );
+    }
+
+    /**
+     * Get the process instance to execute a command
+     *
+     * @param ArrayInput $input
+     *
+     * @return Process
+     *
+     * @author João Paulo Cercal <sistemas@cekurte.com>
+     * @version 0.1
+     */
+    protected function getProcess(ArrayInput $input)
+    {
+        $process = new Process(sprintf('%s %s %s', 'php', 'app/console', (string) $input));
+
+        $process->setWorkingDirectory($this->getProjectDirectory());
+
+        return $process;
+    }
+
+    /**
+     * Get the project directory
+     *
+     * @return string
+     *
+     * @author João Paulo Cercal <sistemas@cekurte.com>
+     * @version 0.1
+     */
+    protected function getProjectDirectory()
+    {
+        return realpath($this->getAppDirectory() . '/../');
     }
 
     /**
@@ -237,7 +360,7 @@ class GeneratorController extends CekurteController
      */
     protected function getSrcDirectory()
     {
-        return realpath($this->getAppDirectory() . '/../src');
+        return realpath($this->getProjectDirectory() . '/src');
     }
 
     /**
@@ -276,30 +399,6 @@ class GeneratorController extends CekurteController
     protected function getFilteredTableName($table)
     {
         return str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($table))));
-    }
-
-    /**
-     * Get a instance of Application
-     *
-     * @return Application
-     *
-     * @author João Paulo Cercal <sistemas@cekurte.com>
-     * @version 0.1
-     */
-    protected function getApplication()
-    {
-        $kernel = $this->get('kernel');
-
-        $application = new Application($kernel);
-        $application->setAutoExit(false);
-        $application->setCatchExceptions(true);
-        $application->add(new ImportMappingDoctrineCommand());
-        $application->add(new RouterDebugCommand());
-        $application->add(new GenerateBundleCommand());
-
-
-
-        return $application;
     }
 
     /**
