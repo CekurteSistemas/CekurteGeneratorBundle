@@ -1,4 +1,4 @@
-{% extends 'CekurteGeneratorBundle::layout.html.twig' %}
+{% extends 'CekurteGeneratorBundle:Generator:layout.html.twig' %}
 
 {% set title    = 'Generator'|trans %}
 {% set subtitle = 'List of the entities'|trans %}
@@ -55,7 +55,7 @@
                             <td>{{ item.bundle }}</td>
                             <td>{{ item.entity }}</td>
                             <td>
-                                <a href="{{ path('cekurte_generator_bundle_entity_show', {'bundle': item.bundle, 'entity': item.entity}) }}" class="btn btn-sm btn-primary">
+                                <a href="{{ path('cekurte_generator_bundle_entity', {'bundle': item.bundle, 'entity': item.entity}) }}" class="btn btn-sm btn-primary">
                                     <span class="glyphicon glyphicon-cog"></span> {{ 'Setup CRUD' | trans }}
                                 </a>
                             </td>

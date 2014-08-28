@@ -5,7 +5,7 @@ namespace Cekurte\GeneratorBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller as SymfonyController;
 
 /**
- * Controller padrão da aplicação.
+ * Custom Controller.
  *
  * @author João Paulo Cercal <sistemas@cekurte.com>
  * @version 1.0
@@ -13,13 +13,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller as SymfonyController;
 abstract class CekurteController extends SymfonyController
 {
     /**
-     * Atalho para retornar a paginação de registros.
+     * Get the pagination.
      *
-     * @param mixed $query
+     * @param mixed $data
      * @param int $page
-     * @param int $resultsPerPage
+     * @param int|null $resultsPerPage
      *
-     * @return Knp\Component\Pager\Pagination\PaginationInterface
+     * @return \Knp\Component\Pager\Pagination\PaginationInterface
      */
     public function getPagination($data, $page, $resultsPerPage = null)
     {
@@ -31,9 +31,9 @@ abstract class CekurteController extends SymfonyController
     }
 
     /**
-     * Cria um formulário para deletar um registro da base de dados.
+     * Create the delete form.
      *
-     * @return Symfony\Component\Form\Form
+     * @return \Symfony\Component\Form\Form
      */
     public function createDeleteForm()
     {

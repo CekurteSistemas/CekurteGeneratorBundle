@@ -9,10 +9,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use JMS\SecurityExtraBundle\Annotation\Secure;
+use Sensio\Bundle\GeneratorBundle\Command\GenerateBundleCommand;
 use Symfony\Bundle\FrameworkBundle\Command\RouterDebugCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Application;;
+use Symfony\Component\Console\ConsoleEvents;
+use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\StreamOutput;
@@ -149,7 +153,7 @@ class GeneratorController extends CekurteController
      * @author João Paulo Cercal <sistemas@cekurte.com>
      * @version 0.1
      */
-    public function createBundleAction(Request $request)
+    public function bundleAction(Request $request)
     {
         $form = $this->createForm(new FormCreateBundleType());
 
@@ -157,30 +161,50 @@ class GeneratorController extends CekurteController
 
             $form->bind($request);
 
-            $application    = $this->getApplication();
+            if ($form->isValid()) {
 
-            $output         = new NullOutput();
+                $application    = $this->getApplication();
 
-            $input          = new ArrayInput(array(
-                'command'           => 'generate:bundle',
-                '--namespace'       => $form->get('namespace')->getData(),
-                '--format'          => strtolower($form->get('format')->getData()),
-                '--structure'       => true,
-                '--no-interaction'  => true,
+                $output         = new BufferedOutput();
+
+                $input          = new ArrayInput($params = array(
+                    'command'           => 'generate:bundle',
+                    '--namespace'       => str_replace('/', '\\', $form->get('namespace')->getData()),
+                    '--format'          => strtolower($form->get('format')->getData()),
+                    '--dir'             => $this->getSrcDirectory(),
+                    '--no-interaction',
+                ));
+
+                $resultCode = $application->run($input, $output);
+            }
+
+            $bundleGenerated = isset($resultCode) ? ($resultCode === 0 ? true : false) : false;
+
+            $flashBag = $this->get('session')->getFlashBag();
+
+            if ($bundleGenerated === true) {
+
+                $flashBag->add('commandOutput', array(
+                    'type'      => 'success',
+                    'message'   => $output->fetch(),
+                ));
+
+                $flashBag->add('message', array(
+                    'type'      => 'success',
+                    'message'   => $this->get('translator')->trans('Bundle generated with successfully'),
+                ));
+
+                return $this->redirect($this->generateUrl('cekurte_generator_bundle'));
+            }
+
+            $flashBag->add('commandOutput', array(
+                'type'      => 'error',
+                'message'   => $output->fetch(),
             ));
 
-            $resultCode = $application->run($input, $output);
-
-            var_dump($resultCode);
-            exit;
-
-            $tableImported = $form->isValid();
-
-            $this->get('session')->getFlashBag()->add('message', array(
-                'type'      => $tableImported ? 'success' : 'error',
-                'message'   => $tableImported
-                        ? $this->get('translator')->trans('Table imported with successfully')
-                        : $this->get('translator')->trans('The table was not imported'),
+            $flashBag->add('message', array(
+                'type'      => 'error',
+                'message'   => $this->get('translator')->trans('The bundle was not generated'),
             ));
         }
 
@@ -188,6 +212,32 @@ class GeneratorController extends CekurteController
             'bundles'   => $this->getBundles(),
             'form'      => $form->createView(),
         );
+    }
+
+    /**
+     * Get the app directory
+     *
+     * @return string
+     *
+     * @author João Paulo Cercal <sistemas@cekurte.com>
+     * @version 0.1
+     */
+    protected function getAppDirectory()
+    {
+        return $this->get('kernel')->getRootDir();
+    }
+
+    /**
+     * Get the src directory
+     *
+     * @return string
+     *
+     * @author João Paulo Cercal <sistemas@cekurte.com>
+     * @version 0.1
+     */
+    protected function getSrcDirectory()
+    {
+        return realpath($this->getAppDirectory() . '/../src');
     }
 
     /**
@@ -242,8 +292,12 @@ class GeneratorController extends CekurteController
 
         $application = new Application($kernel);
         $application->setAutoExit(false);
+        $application->setCatchExceptions(true);
         $application->add(new ImportMappingDoctrineCommand());
         $application->add(new RouterDebugCommand());
+        $application->add(new GenerateBundleCommand());
+
+
 
         return $application;
     }
