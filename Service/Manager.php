@@ -2,7 +2,8 @@
 
 namespace Cekurte\GeneratorBundle\Service;
 
-use Cekurte\ComponentBundle\Util\RequestContainerAware;
+use Cekurte\ComponentBundle\Util\DoctrineContainerAware;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -11,7 +12,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @author João Paulo Cercal <sistemas@cekurte.com>
  * @version 1.0
  */
-abstract class Manager extends RequestContainerAware implements ManagerInterface
+abstract class Manager extends DoctrineContainerAware implements ManagerInterface
 {
     /**
      * Get the resource class name
@@ -21,46 +22,22 @@ abstract class Manager extends RequestContainerAware implements ManagerInterface
     abstract protected function getResourceClass();
 
     /**
-     * Find a resource(s) given the parameters
-     *
-     * @api
-     *
-     * @param array $parameters
-     * @param bool $findOneResource
-     *
-     * @return array|\Doctrine\ORM\Query
-     *
-     * @throws NotFoundHttpException
+     * @inheritdoc
      */
-    protected function findResourcesAndThrowExceptionIfNotFound($parameters, $findOneResource)
+    public function findResourceAndThrowExceptionIfNotFound($parameters)
     {
-        $queryBuilder = $this->getRepository($this->getResourceClass())->createQueryBuilder('ck');
+        $resource = $this->getRepository($this->getResourceClass())->findOneBy($parameters);
 
-        if ($findOneResource === true) {
-
-            $resource = $this->getRepository($this->getResourceClass())->findOneBy($parameters);
-
-            if (!$resource) {
-                throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', implode(', ', array_keys($parameters))));
-            }
-
-            return $resource;
+        if (!$resource) {
+            throw new NotFoundHttpException(sprintf(
+                'The resource "%s" was not found. Filter conditions: "%s" with values "%s"',
+                $this->getResourceClass(),
+                implode(', ', array_keys($parameters)),
+                implode(', ', array_values($parameters))
+            ));
         }
 
-        foreach ($parameters as $identifier => $value) {
-
-            $column = strpos($identifier, '.') > 0
-                ? $identifier
-                : 'ck.' . $identifier
-            ;
-
-            $queryBuilder
-                ->andWhere($queryBuilder->expr()->eq($column, sprintf(':%s', $identifier)))
-                ->setParameter($identifier, $value)
-            ;
-        }
-
-        return $queryBuilder->getQuery();
+        return $resource;
     }
 
     /**
@@ -68,7 +45,7 @@ abstract class Manager extends RequestContainerAware implements ManagerInterface
      */
     public function getResource($identifier, $field = 'id')
     {
-        return $this->findResource(array(
+        return $this->findResourceAndThrowExceptionIfNotFound(array(
             $field => $identifier
         ));
     }
@@ -76,34 +53,49 @@ abstract class Manager extends RequestContainerAware implements ManagerInterface
     /**
      * @inheritdoc
      */
-    public function getResources($format, $page = 1, $numberResourcesPerPage = 10)
+    public function findResources($parameters)
     {
-        $resources = $this->findResources(array('title' => 'title'));
+        return $this->getRepository($this->getResourceClass())->getFilteredQuery(
+            $parameters
+        );
+    }
 
-        $pagination = $this->getContainer()->get('knp_paginator')->paginate($resources, $page, $numberResourcesPerPage);
+    /**
+     * @inheritdoc
+     */
+    public function getResources(Request $request)
+    {
+        $fields     = $request->get('fields',  null);
+        $joins      = $request->get('joins',   null);
+        $filters    = $request->get('filters', null);
+        $sort       = $request->get('sort',    null);
 
-        return !in_array(strtolower($format), array('json', 'xml'))
+        $queryString = array(
+            'format'    => $request->get('_format', 'html'),
+            'offset'    => $request->get('offset', 0),
+            'limit'     => $request->get('limit', 10),
+
+            'count'     => $request->get('count', null),
+
+            'fields'    => empty($fields)   ? array() : explode(',', $fields),
+            'joins'     => empty($joins)    ? array() : explode(',', $joins),
+            'filters'   => empty($filters)  ? array() : explode(',', $filters),
+            'sort'      => empty($sort)     ? array() : explode(',', $sort),
+        );
+
+        $resources = $this->findResources($queryString);
+
+        var_dump($resources);
+        exit;
+
+        $pagination = $this->getContainer()->get('knp_paginator')->paginate($resources, ++$queryString['offset'], $queryString['limit']);
+
+        return !in_array(strtolower($queryString['format']), array('json', 'xml'))
             ? $pagination
             : array(
                 'total' => $pagination->getTotalItemCount(),
                 'itens' => $pagination->getItems(),
             )
         ;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function findResource($parameters)
-    {
-        return $this->findResourcesAndThrowExceptionIfNotFound($parameters, true);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function findResources($parameters)
-    {
-        return $this->findResourcesAndThrowExceptionIfNotFound($parameters, false);
     }
 }

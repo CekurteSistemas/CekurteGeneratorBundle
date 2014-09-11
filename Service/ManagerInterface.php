@@ -2,6 +2,7 @@
 
 namespace Cekurte\GeneratorBundle\Service;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -29,13 +30,11 @@ interface ManagerInterface
     /**
      * Get a list of resources.
      *
-     * @param string $format the format of content (html, json, xml)
-     * @param int $page page number, starting from 1
-     * @param int $numberResourcesPerPage number of items per page
+     * @param Request $request
      *
      * @return array
      */
-    public function getResources($format, $page = 1, $numberResourcesPerPage = 10);
+    public function getResources(Request $request);
 
     /**
      * Find a resource given the parameters
@@ -44,11 +43,11 @@ interface ManagerInterface
      *
      * @param array $parameters
      *
-     * @return mixed
+     * @return array|\Doctrine\ORM\Query
      *
      * @throws NotFoundHttpException
      */
-    public function findResource($parameters);
+    public function findResourceAndThrowExceptionIfNotFound($parameters);
 
     /**
      * Find a resource given the parameters
