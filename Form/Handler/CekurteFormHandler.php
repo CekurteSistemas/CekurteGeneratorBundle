@@ -7,12 +7,7 @@ use Symfony\Component\Form\FormInterface;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 
-/**
- * Handler padrão para os formulários da aplicação.
- *
- * @author João Paulo Cercal <sistemas@cekurte.com>
- * @version 1.0
- */
+
 abstract class CekurteFormHandler
 {
     /**
