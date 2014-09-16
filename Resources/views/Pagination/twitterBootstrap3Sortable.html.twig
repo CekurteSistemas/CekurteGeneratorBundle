@@ -1,0 +1,15 @@
+{%- block container-%}
+    {%- set sortDirection = cekurte_pagination_sort_direction(field) -%}
+    {%- block container_open -%}<th {% if cekurte_pagination_sorted_by(field) %} class="sorted sorted-direction-{{ sortDirection }}"{% endif %}>{%- endblock -%}
+        {% block link_open %}
+            <a href="{{ path(route, queries|merge({(queryStringSortParameterName): field ~ ':' ~ (sortDirection == 'asc' ? 'desc' : 'asc')})) | replace({'%3A': ':'}) }}">
+        {% endblock %}
+        {%- block label -%}{{ label|trans }}{%- endblock -%}
+        {%- if sortDirection in ['asc', 'desc'] -%}
+            {%- block icon %} <span class="glyphicon {% if sortDirection == 'asc' %}glyphicon-chevron-down{% else %}glyphicon-chevron-up{% endif %}"></span>{%- endblock -%}
+        {%- endif -%}
+        {% block link_close %}
+            </a>
+        {% endblock %}
+    {%- block container_close -%}</th>{%- endblock -%}
+{%- endblock -%}

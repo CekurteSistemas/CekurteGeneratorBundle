@@ -4,7 +4,6 @@ namespace Cekurte\GeneratorBundle\Service;
 
 use Cekurte\ComponentBundle\Util\DoctrineContainerAware;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -70,11 +69,11 @@ abstract class Manager extends DoctrineContainerAware implements ManagerInterfac
         $fields     = $request->get('fields',  null);
         $joins      = $request->get('joins',   null);
         $filters    = $request->get('filters', null);
-        $order      = $request->get('order',   null);
+        $sort       = $request->get('sort',   null);
 
         $queryString = array(
             'format'    => $request->get('_format', 'html'),
-            'offset'    => $request->get('offset', 0),
+            'page'      => $request->get('page', 1),
             'limit'     => $request->get('limit', 10),
 
             'count'     => $request->get('count', null),
@@ -82,31 +81,22 @@ abstract class Manager extends DoctrineContainerAware implements ManagerInterfac
             'fields'    => empty($fields)   ? array() : explode(',', $fields),
             'joins'     => empty($joins)    ? array() : explode(',', $joins),
             'filters'   => empty($filters)  ? array() : explode(',', $filters),
-            'order'     => empty($order)    ? array() : explode(',', $order),
+            'sort'      => empty($sort)     ? array() : explode(',', $sort),
         );
 
         $queryBuilder = $this->findResources($queryString);
 
+        $paginator = new Paginator($queryBuilder);
 
-        $adapter = new \Pagerfanta\Adapter\DoctrineORMAdapter($queryBuilder);
-
-        $pagination = new Pagerfanta($adapter);
-
-        var_dump(
-            $pagination->getNbResults(),
-            $pagination->getCurrentPageResults(),
-            $pagination->getNbPages()
-        );
-        exit;
-
-        $pagination = $this->getContainer()->get('knp_paginator')->paginate($resources, ++$queryString['offset'], $queryString['limit']);
-
-        return !in_array(strtolower($queryString['format']), array('json', 'xml'))
-            ? $pagination
-            : array(
-                'total' => $pagination->getTotalItemCount(),
-                'itens' => $pagination->getItems(),
-            )
+        $paginator
+            ->getQuery()
+            ->setFirstResult($queryString['limit'] * (--$queryString['page']))
+            ->setMaxResults($queryString['limit'])
         ;
+
+        return array(
+            'total' => count($paginator),
+            'items' => $paginator->getIterator()->getArrayCopy(),
+        );
     }
 }

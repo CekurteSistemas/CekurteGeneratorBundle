@@ -24,19 +24,9 @@ class EntityRepository extends DoctrineEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('ck');
 
-        // ?count=ck.id:asc
-        if (!is_null($queryString['count'])) {
-            $queryBuilder->select('COUNT(ck.id) numberOfResources');
-        } else {
-            // ?fields=ck.id,ck.title
-            if (!empty($queryString['fields'])) {
-                $queryBuilder->select(implode(',', $queryString['fields']));
-            }
-        }
-
-        // ?order=ck.id:asc,ck.title:desc
-        if (!empty($queryString['order'])) {
-            foreach ($queryString['order'] as $item) {
+        // ?sort=ck.id:asc,ck.title:desc
+        if (!empty($queryString['sort'])) {
+            foreach ($queryString['sort'] as $item) {
                 $data = explode(':', $item);
                 $queryBuilder->addOrderBy($data[0], $data[1]);
             }
@@ -58,34 +48,6 @@ class EntityRepository extends DoctrineEntityRepository
                 ;
             }
         }
-
-        // ?joins=ck.categories:cat:inner,ck.categories:cat:left:eq:test
-        if (!empty($queryString['joins'])) {
-            foreach ($queryString['joins'] as $item) {
-                $data = explode(':', $item);
-
-                $suffix     = 'Join';
-                $field      = $data[0];
-                $alias      = $data[1];
-                $joinType   = strtolower($data[2]) . $suffix;
-
-                if (!isset($data[3]) and !isset($data[4])) {
-                    $queryBuilder->{$joinType}($field, $alias);
-                } else {
-
-                    $fieldParam = str_replace('.', '', $field) . $suffix;
-                    $condition  = strtolower($data[3]);
-                    $value      = $condition === 'like' ? '%' . $data[4] . '%' : $data[4];
-
-                    $queryBuilder
-                        ->{$joinType}($field, $alias, Join::WITH, $queryBuilder->expr()->{$condition}($field, ':' . $fieldParam))
-                        ->setParameter($fieldParam, $value)
-                    ;
-                }
-            }
-        }
-
-        $queryBuilder->setMaxResults(3)->setFirstResult(6);
 
         return $queryBuilder;
     }

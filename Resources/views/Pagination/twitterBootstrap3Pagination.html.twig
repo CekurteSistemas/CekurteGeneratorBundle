@@ -1,0 +1,32 @@
+{%- block container-%}
+    {%- block container_open -%}<ul class="pagination">{%- endblock -%}
+
+        {%- block previous -%}
+            {%- block previous_container_open -%}<li{% if is_first_page %} class="disabled"{% endif %}>{%- endblock -%}
+                {%- block previous_link_open -%}<a href="{% if is_first_page %}#{% else %}{{ path(route, queries|merge({(queryStringPageParameterName): (current_page_number - 1)})) | replace({'%3A': ':'})  }}{% endif %}">{%- endblock -%}
+                    {%- block previous_link_label -%}&laquo;{%- endblock -%}
+                {%- block previous_link_close -%}</a>{%- endblock -%}
+            {%- block previous_container_close -%}</li>{%- endblock -%}
+        {%- endblock -%}
+
+        {% for page_number in 1..total_page_number %}
+            {%- block page -%}
+                {% set disabledLinkPage = ((is_first_page and loop.first) or (is_last_page and loop.last) or (page_number == current_page_number)) %}
+                {%- block page_container_open -%}<li{% if disabledLinkPage %} class="disabled"{% endif %}>{%- endblock -%}
+                    {%- block page_link_open -%}<a href="{% if disabledLinkPage %}#{% else %}{{ path(route, queries|merge({(queryStringPageParameterName): page_number})) | replace({'%3A': ':'})  }}{% endif %}">{%- endblock -%}
+                        {%- block page_link_label -%}{{ page_number }}{%- endblock -%}
+                    {%- block page_link_close -%}</a>{%- endblock -%}
+                {%- block page_container_close -%}</li>{%- endblock -%}
+            {%- endblock -%}
+        {% endfor %}
+
+        {%- block next -%}
+            {%- block next_container_open -%}<li{% if is_last_page %} class="disabled"{% endif %}>{%- endblock -%}
+                {%- block next_link_open -%}<a href="{% if is_last_page %}#{% else %}{{ path(route, queries|merge({(queryStringPageParameterName): (current_page_number + 1)})) | replace({'%3A': ':'})  }}{% endif %}">{%- endblock -%}
+                    {%- block next_link_label -%}&raquo;{%- endblock -%}
+                {%- block next_link_close -%}</a>{%- endblock -%}
+            {%- block next_container_close -%}</li>{%- endblock -%}
+        {%- endblock -%}
+
+    {%- block container_close -%}</ul>{%- endblock -%}
+{%- endblock -%}
