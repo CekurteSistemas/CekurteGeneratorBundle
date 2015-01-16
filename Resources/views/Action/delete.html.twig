@@ -7,9 +7,6 @@
             {% block method %}
                 <input type="hidden" name="_method" value="DELETE" />
             {% endblock %}
-            {% block field %}
-                <input type="hidden" name="{{ identifierKey }}" value="{{ identifierValue }}" />
-            {% endblock %}
             {% block token %}
                 <input type="hidden" name="form[_token]" value="{{ form._token.vars.value }}" />
             {% endblock %}

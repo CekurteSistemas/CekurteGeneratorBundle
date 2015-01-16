@@ -2,7 +2,7 @@
 
 namespace Cekurte\GeneratorBundle\Service;
 
-use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -14,7 +14,27 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 interface ManagerInterface 
 {
     /**
-     * Get a resource given the identifier
+     * Get the resource class name.
+     *
+     * @return string
+     */
+    public function getResourceClassName();
+
+    /**
+     * Get a resource loggable given the identifier or null.
+     *
+     * @api
+     *
+     * @param mixed $resource
+     *
+     * @return mixed
+     *
+     * @throws NotFoundHttpException
+     */
+    public function getResourceLoggable($resource);
+
+    /**
+     * Get a resource given the identifier or null.
      *
      * @api
      *
@@ -30,14 +50,26 @@ interface ManagerInterface
     /**
      * Get a list of resources.
      *
-     * @param Request $request
+     * @param QueryBuilder $queryBuilder
+     * @param bool $asArray
      *
      * @return array
      */
-    public function getResources(Request $request);
+    public function getResources(QueryBuilder $queryBuilder, $asArray = false);
 
     /**
-     * Find a resource given the parameters
+     * Get a list of resources (paginated).
+     *
+     * @param QueryBuilder $queryBuilder
+     * @param int $page
+     * @param int $limit
+     *
+     * @return array
+     */
+    public function getPaginatedResources(QueryBuilder $queryBuilder, $page = 1, $limit = 10);
+
+    /**
+     * Find a resource given the parameters.
      *
      * @api
      *
@@ -50,15 +82,61 @@ interface ManagerInterface
     public function findResourceAndThrowExceptionIfNotFound($parameters);
 
     /**
-     * Find a resource given the parameters
+     * Find a resource given the parameters.
      *
      * @api
      *
      * @param array $parameters
      *
+     * @return array
+     */
+    public function findResources($parameters);
+
+    /**
+     * Find a resource given the querystring.
+     *
+     * @api
+     *
+     * @param array $queryString
+     *
+     * @return QueryBuilder
+     */
+    public function findResourcesByQueryString($queryString);
+
+    /**
+     * Create a new resource.
+     *
+     * @api
+     *
+     * @param mixed $resource
+     *
+     * @return mixed
+     */
+    public function createResource($resource);
+
+    /**
+     * Update a resource.
+     *
+     * @api
+     *
+     * @param mixed $resource
+     *
      * @return mixed
      *
      * @throws NotFoundHttpException
      */
-    public function findResources($parameters);
+    public function updateResource($resource);
+
+    /**
+     * Delete a resource.
+     *
+     * @api
+     *
+     * @param mixed $identifier
+     *
+     * @return bool
+     *
+     * @throws NotFoundHttpException
+     */
+    public function deleteResource($identifier);
 }

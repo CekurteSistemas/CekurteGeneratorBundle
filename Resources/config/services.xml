@@ -3,6 +3,9 @@
 <container xmlns="http://symfony.com/schema/dic/services"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="cekurte_generator.service.manager.class">Cekurte\GeneratorBundle\Service\Manager</parameter>
+    </parameters>
     <services>
         <service id="cekurte_generator.twig.extension.roleextension" class="Cekurte\GeneratorBundle\Twig\Extension\RoleExtension">
             <tag name="twig.extension" />
@@ -18,6 +21,30 @@
             <call method="setContainer">
                 <argument type="service" id="service_container" />
             </call>
+        </service>
+        <service id="cekurte_generator.kernel.listener.exception" class="Cekurte\GeneratorBundle\EventListener\ControllerExceptionListener">
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+            <tag name="kernel.event_listener" event="kernel.exception" method="onKernelException" />
+        </service>
+        <service id="cekurte_generator.form.type.crud" class="Cekurte\GeneratorBundle\Form\Type\CrudFormType">
+            <tag name="form.type" alias="ck_crud" />
+        </service>
+        <service id="cekurte_generator.form.type.search" class="Cekurte\GeneratorBundle\Form\Type\SearchFormType">
+            <tag name="form.type" alias="ck_search" />
+        </service>
+        <service id="cekurte_generator.form.type.search.text" class="Cekurte\GeneratorBundle\Form\Type\Search\TextType">
+            <tag name="form.type" alias="ck_search_text" />
+        </service>
+        <service id="cekurte_generator.form.type.search.date" class="Cekurte\GeneratorBundle\Form\Type\Search\DateType">
+            <tag name="form.type" alias="ck_search_date" />
+        </service>
+        <service id="cekurte_generator.form.type.date" class="Cekurte\GeneratorBundle\Form\Type\DateType">
+            <tag name="form.type" alias="ck_date" />
+        </service>
+        <service id="cekurte_generator.form.type.editor" class="Cekurte\GeneratorBundle\Form\Type\EditorType">
+            <tag name="form.type" alias="ck_editor" />
         </service>
     </services>
 </container>

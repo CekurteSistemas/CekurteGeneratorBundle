@@ -1,7 +1,7 @@
 
     /**
 {% block phpdoc_method_header %}
-     * Displays a form to create a new {{ entity }} entity.
+     * Display a form to create a new resource.
 {% endblock phpdoc_method_header %}
      *
 {% block phpdoc_method_annotations %}
@@ -9,12 +9,11 @@
      * @Route("/new", name="{{ route_name_prefix }}_new")
      * @Method("GET")
      * @Template()
-     * @Secure(roles="ROLE_{{ bundle | upper }}_{{ entity | upper }}_CREATE, ROLE_ADMIN")
+     * @Secure(roles="ROLE_{{ bundle | slice(0, -6) | upper }}_{{ entity | upper }}_CREATE, ROLE_ADMIN")
 {% endif %}
 {% endblock phpdoc_method_annotations %}
      *
-     * @return array|Response
-{% include 'crud/actions/author.php.twig' %}
+     * @return array
      */
 {% block method_definition %}
     public function newAction()

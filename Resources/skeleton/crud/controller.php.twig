@@ -2,30 +2,26 @@
 
 namespace {{ namespace }}\Controller{{ entity_namespace ? '\\' ~ entity_namespace : '' }};
 
-{% block use_statements %}
-{% if 'new' in actions or 'edit' in actions or 'delete' in actions %}
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Cekurte\GeneratorBundle\Controller\RestController;
+use Cekurte\GeneratorBundle\Office\PHPExcel;
+use Cekurte\GeneratorBundle\Service\Manager\ControllerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Cekurte\GeneratorBundle\Controller\CekurteController;
-use Cekurte\GeneratorBundle\Controller\RepositoryInterface;
-use Cekurte\GeneratorBundle\Office\PHPExcel as CekurtePHPExcel;
-{%- endif %}
-
-{% if 'annotation' == format -%}
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+{% block use_statements %}
+{% if 'annotation' == format %}
+use JMS\SecurityExtraBundle\Annotation\Secure;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use JMS\SecurityExtraBundle\Annotation\Secure;
 {%- endif %}
 
 use {{ namespace }}\Entity\{{ entity }};
-use {{ namespace }}\Entity\Repository\{{ entity }}Repository;
 {% if 'new' in actions or 'edit' in actions %}
 use {{ namespace }}\Form\Type\{{ entity }}FormType;
-use {{ namespace }}\Form\Handler\{{ entity }}FormHandler;
+use {{ namespace }}\Form\Type\{{ entity }}SearchFormType;
 {% endif %}
 {% endblock use_statements %}
 
@@ -38,7 +34,7 @@ use {{ namespace }}\Form\Handler\{{ entity }}FormHandler;
 {% if 'annotation' == format -%}
 {% set base_url = route_prefix|replace({'_': '-'})|split('-') %}
 {% set prefix = base_url|first %}
- * @Route("/{{ prefix }}
+ * @Route("/v1/{{ prefix }}
 {%- if base_url|first != base_url|last -%}
     {{ prefix in ['admin', 'api'] ? '/' : '-' }}
 {%- endif -%}
@@ -49,34 +45,40 @@ use {{ namespace }}\Form\Handler\{{ entity }}FormHandler;
 
 {% endblock phpdoc_class_annotations %}
  *
- * @author João Paulo Cercal <sistemas@cekurte.com>
- * @version 0.1
+ * @author Cekurte Generator <sistemas@cekurte.com>
+ * @see https://github.com/jpcercal/cekurtegeneratorbundle
+ * @version 2.0
  */
 {% block class_definition %}
-class {{ entity_class }}Controller extends CekurteController implements RepositoryInterface
+class {{ entity_class }}Controller extends RestController implements ControllerInterface
 {% endblock class_definition %}
 {
 {% block class_body %}
 
-    {%- include 'crud/actions/entity-repository.php.twig' %}
+    {%- include 'crud/actions/manager.php.twig' %}
 
     {%- if 'index' in actions %}
         {%- include 'crud/actions/index.php.twig' %}
-        {%- include 'crud/actions/search.php.twig' %}
         {%- include 'crud/actions/export.php.twig' %}
-    {%- endif %}
-
-    {%- if 'new' in actions %}
-        {%- include 'crud/actions/create.php.twig' %}
-        {%- include 'crud/actions/new.php.twig' %}
     {%- endif %}
 
     {%- if 'show' in actions %}
         {%- include 'crud/actions/show.php.twig' %}
     {%- endif %}
 
+    {%- if 'new' in actions %}
+        {%- include 'crud/actions/new.php.twig' %}
+    {%- endif %}
+
     {%- if 'edit' in actions %}
         {%- include 'crud/actions/edit.php.twig' %}
+    {%- endif %}
+
+    {%- if 'new' in actions %}
+        {%- include 'crud/actions/create.php.twig' %}
+    {%- endif %}
+
+    {%- if 'edit' in actions %}
         {%- include 'crud/actions/update.php.twig' %}
     {%- endif %}
 

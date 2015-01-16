@@ -2,34 +2,17 @@
 
 namespace Cekurte\GeneratorBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller as SymfonyController;
+use Cekurte\ComponentBundle\Entity\RepositoryInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
- * Custom Controller.
+ * Cekurte Controller.
  *
  * @author João Paulo Cercal <sistemas@cekurte.com>
  * @version 1.0
  */
-abstract class CekurteController extends SymfonyController
+abstract class CekurteController extends Controller implements RepositoryInterface
 {
-    /**
-     * Get the pagination.
-     *
-     * @param mixed $data
-     * @param int $page
-     * @param int|null $resultsPerPage
-     *
-     * @return \Knp\Component\Pager\Pagination\PaginationInterface
-     */
-    public function getPagination($data, $page, $resultsPerPage = null)
-    {
-        if ($resultsPerPage === null) {
-            $resultsPerPage = $this->container->getParameter('paginator_number_results_per_page');
-        }
-
-        return $this->get('knp_paginator')->paginate($data, $page, $resultsPerPage);
-    }
-
     /**
      * Create the delete form.
      *
@@ -38,5 +21,13 @@ abstract class CekurteController extends SymfonyController
     public function createDeleteForm()
     {
         return $this->createFormBuilder()->add('id', 'hidden')->getForm();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEntityRepository($persistentObjectName, $persistentManagerName = null)
+    {
+        return $this->getDoctrine()->getRepository($persistentObjectName, $persistentManagerName);
     }
 }

@@ -12,6 +12,7 @@
 namespace Cekurte\GeneratorBundle\Generator;
 
 use Sensio\Bundle\GeneratorBundle\Generator\DoctrineCrudGenerator as Generator;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
@@ -90,6 +91,8 @@ class DoctrineCrudGenerator extends Generator
         $this->generateEntityRepository();
         $this->generateTestClass();
         $this->generateConfiguration();
+        $this->generateServiceManager();
+        $this->customizeEntity();
     }
 
     /**
@@ -150,6 +153,203 @@ class DoctrineCrudGenerator extends Generator
     }
 
     /**
+     * Generates the service manager.
+     *
+     */
+    protected function generateServiceManager()
+    {
+        $target = sprintf(
+            '%s/Resources/config/services.xml',
+            $this->bundle->getPath()
+        );
+
+        $bundleName = substr(strtolower($this->bundle->getName()), 0, -6);
+
+        $parameterKey = sprintf('%s.entity.%s.class', $bundleName, strtolower($this->entity));
+        $parameterId  = sprintf('%s.manager.%s', $bundleName, strtolower($this->entity));
+        $parameterValue = sprintf('%s\\Entity\\%s', $this->bundle->getNamespace(), $this->entity);
+
+        $xmlContent = file_get_contents($target);
+
+        $dom = new \DOMDocument();
+        $dom->loadXML($xmlContent);
+
+        $container = $dom->getElementsByTagName('container')->item(0);
+
+        $tags = array('parameters', 'services');
+
+        foreach ($tags as $tag) {
+            if ($dom->getElementsByTagName($tag)->length === 0) {
+                $container->appendChild(
+                    $dom->createElement($tag)
+                );
+            }
+        }
+
+        $parameters = $dom->getElementsByTagName('parameters')->item(0);
+        $services   = $dom->getElementsByTagName('services')->item(0);
+
+        // parameter
+
+        $hasElementParameter = true;
+
+        $elements = $parameters->getElementsByTagName('parameter');
+
+        foreach ($elements as $element) {
+
+            $key = $element->attributes->getNamedItem('key')->nodeValue;
+
+            if ($key === $parameterKey) {
+                $hasElementParameter = false;
+            }
+        }
+
+        if ($hasElementParameter) {
+
+            $parameter = $dom->createElement('parameter');
+
+            $parameter->setAttribute('key', $parameterKey);
+
+            $parameter->nodeValue = $parameterValue;
+
+            $parameters->appendChild($parameter);
+        }
+
+        // services
+
+        $hasElementService = true;
+
+        $elements = $services->getElementsByTagName('service');
+
+        foreach ($elements as $element) {
+
+            $id = $element->attributes->getNamedItem('id')->nodeValue;
+
+            if ($id === $parameterId) {
+                $hasElementService = false;
+            }
+        }
+
+        if ($hasElementService) {
+
+            $service = $dom->createElement('service');
+
+            $service->setAttribute('id', $parameterId);
+            $service->setAttribute('class', '%cekurte_generator.service.manager.class%');
+
+            $entityArgument = $dom->createElement('argument');
+            $entityArgument->nodeValue = '%' . $parameterKey . '%';
+
+            $service->appendChild($entityArgument);
+
+            $call = $dom->createElement('call');
+
+            $callArgument = $dom->createElement('argument');
+            $callArgument->setAttribute('type', 'service');
+            $callArgument->setAttribute('id', 'service_container');
+
+            $call->setAttribute('method', 'setContainer');
+            $call->appendChild($callArgument);
+
+            $service->appendChild($call);
+
+            $services->appendChild($service);
+        }
+
+        if ($hasElementParameter or $hasElementService) {
+
+            $tidy = tidy_parse_string($dom->saveXml(), array(
+                'indent'            => true,
+                'indent-cdata'      => true,
+                'indent-attributes' => false,
+                'indent-spaces'     => 4,
+                'input-xml'         => true,
+                'output-xml'        => true,
+                'add-xml-space'     => true,
+                'wrap'              => 500,
+            ));
+
+            $tidy->cleanRepair();
+
+            file_put_contents($target, (string) $tidy);
+        }
+    }
+
+    /**
+     * Generates the entity repository class only.
+     */
+    protected function customizeEntity()
+    {
+        $dir = $this->bundle->getPath();
+
+        $target = sprintf(
+            '%s/Entity/%s.php',
+            $dir,
+            $this->entity
+        );
+
+        $entityRepository = sprintf(
+            '%s\\Entity\\Repository\\%sRepository',
+            $this->bundle->getNamespace(),
+            $this->entity
+        );
+
+        $reflection = new \ReflectionClass(sprintf(
+            '%s\\Entity\\%s',
+            $this->bundle->getNamespace(),
+            $this->entity
+        ));
+
+        $fileContent = file_get_contents($target);
+
+        // filter the "use" statement ..
+
+        $gedmoNamespace = 'use Gedmo\Mapping\Annotation as Gedmo;';
+
+        if (strpos($fileContent, $gedmoNamespace) === false) {
+            $fileContent = preg_replace('/(use Doctrine.?ORM.?Mapping as ORM;)/', sprintf('$1%s%s', PHP_EOL, $gedmoNamespace), $fileContent);
+        }
+
+        // filter the "annotation" in class of the entity ..
+
+        $annotation = $reflection->getDocComment();
+
+        if (($pos = strpos($fileContent, $annotation)) !== false) {
+
+            $annotation = preg_replace('/@ORM.?Table(\(\))?\n/', sprintf('@ORM\\Table(name="%s")%s', strtolower($this->entity), PHP_EOL), $annotation);
+            $annotation = preg_replace('/@ORM.?Entity(\(\))?\n/', sprintf('@ORM\\Entity(repositoryClass="%s")%s', $entityRepository, PHP_EOL), $annotation);
+
+            if (strpos($annotation, 'Loggable') === false) {
+                $annotation = preg_replace('/(@ORM.?Entity\(repositoryClass=\".*\"\))/', sprintf('$1%s * @Gedmo\Loggable', PHP_EOL), $annotation);
+            }
+
+            if (strpos($annotation, 'SoftDeleteable') === false) {
+                $annotation = preg_replace('/(@Gedmo.?Loggable(\(.*\))?)/', sprintf('$1%s * @Gedmo\SoftDeleteable', PHP_EOL), $annotation);
+            }
+
+            $fileContent = str_replace(substr($fileContent, $pos, strlen($reflection->getDocComment())), $annotation, $fileContent);
+        }
+
+        // filter the "annotation" in methods of the entity ..
+
+        $properties = $reflection->getProperties();
+
+        foreach ($properties as $property) {
+
+            $annotation = $property->getDocComment();
+
+            if (($pos = strpos($fileContent, $annotation)) !== false) {
+                if (strpos($annotation, 'Versioned') === false) {
+                    $annotation = preg_replace('/(@ORM.?Column)/', sprintf('@Gedmo\Versioned%s     *%s     * $1', PHP_EOL, PHP_EOL, PHP_EOL), $annotation);
+                }
+                $fileContent = str_replace(substr($fileContent, $pos, strlen($property->getDocComment())), $annotation, $fileContent);
+            }
+        }
+
+        file_put_contents($target, $fileContent);
+    }
+
+    /**
      * Generates the entity repository class only.
      */
     protected function generateEntityRepository()
@@ -191,6 +391,16 @@ class DoctrineCrudGenerator extends Generator
         ));
 
         $this->renderFile('crud/views/search.html.twig.twig', $dir.'/search.html.twig', array(
+            'bundle'            => $this->bundle->getName(),
+            'entity'            => $this->entity,
+            'fields'            => $this->getFieldMappings(),
+            'actions'           => $this->actions,
+            'record_actions'    => $this->getRecordActions(),
+            'route_prefix'      => $this->routePrefix,
+            'route_name_prefix' => $this->routeNamePrefix,
+        ));
+
+        $this->renderFile('crud/views/layout.html.twig.twig', $dir.'/layout.html.twig', array(
             'bundle'            => $this->bundle->getName(),
             'entity'            => $this->entity,
             'fields'            => $this->getFieldMappings(),

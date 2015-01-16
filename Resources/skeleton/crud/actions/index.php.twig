@@ -1,82 +1,55 @@
 
     /**
 {% block phpdoc_method_header %}
-     * Lists all {{ entity }} entities.
+     * List all resources.
 {% endblock phpdoc_method_header %}
      *
 {% block phpdoc_method_annotations %}
 {% if 'annotation' == format %}
-     * @Route("/", defaults={"page"=1, "sort"="ck.id", "direction"="asc"}, name="{{ route_name_prefix }}")
-     * @Route("/page/{page}/sort/{sort}/direction/{direction}/", defaults={"page"=1, "sort"="ck.id", "direction"="asc"}, name="{{ route_name_prefix }}_paginator")
+     * @Route("/", defaults={"page"=1, "limit"=10}, requirements={"page": "\d+", "limit": "\d+"}, name="{{ route_name_prefix }}")
      * @Method("GET")
      * @Template()
-     * @Secure(roles="ROLE_{{ bundle | upper }}_{{ entity | upper }}, ROLE_ADMIN")
+     * @Secure(roles="ROLE_{{ bundle | slice(0, -6) | upper }}_{{ entity | upper }}, ROLE_ADMIN")
 {% endif %}
 {% endblock phpdoc_method_annotations %}
      *
-     * @param int $page
-     * @param string $sort
-     * @param string $direction
-     * @return array
-{% include 'crud/actions/author.php.twig' %}
+     * @param Request $request
+     * @return array|JsonResponse
      */
 {% block method_definition %}
-    public function indexAction($page, $sort, $direction)
+    public function indexAction(Request $request)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $form = $this->createForm(new {{ entity }}FormType(), new {{ entity }}(), array(
-            'search' => true,
+        $queryBuilder = $this->getManager()->findResourcesByQueryString($request->query->all());
+
+        $data = $this->getManager()->getPaginatedResources(
+            $queryBuilder,
+            $request->get('page'),
+            $request->get('limit')
+        );
+
+        $searchForm = $this->createForm(new {{ entity }}SearchFormType(), null, array(
+            'filters' => $request->get('filters')
         ));
 
-        if ($this->get('session')->has('search_{{ entity | lower }}')) {
+        $response = $this->createResponse($data, $this->getAcceptResponse($request));
 
-            $form->bind($this->get('session')->get('search_{{ entity | lower }}'));
+        if ($response instanceof JsonResponse) {
+            return $response;
         }
 
-{%- set hasDateField = false -%}
-
-{%- for field in fields -%}
-    {%- if field.type in ['date'] -%}
-        {%- set hasDateField = true -%}
-    {%- endif -%}
-{%- endfor -%}
-
-{%- if hasDateField == false -%}
-        {{ "\n" }}
-        $query = $this->getEntityRepository()->getQuery($form->getData(), $sort, $direction);
-{%- else -%}
-        {{ "\n" }}
-        $query = $this->getEntityRepository()->getQuery($form->getData(), $sort, $direction, array(
-        {%- for field in fields -%}
-            {%- if field.type in ['date'] -%}
-                {% if not loop.first %}{{ "\n" }}{% endif %}
-            '{{ field.fieldName }}From' => $form->get('{{ field.fieldName }}From')->getData(),
-            '{{ field.fieldName }}To'   => $form->get('{{ field.fieldName }}To')->getData(),
-            {%- endif -%}
-        {%- endfor %}
-
-        ));
-{%- endif -%}
-        {{ "\n" }}
-        $pagination = $this->getPagination($query, $page);
-
-        $pagination->setUsedRoute('{{ route_name_prefix }}_paginator');
+        $response['search_form'] = $searchForm->createView();
+        $response['delete_form'] = $this->createDeleteForm()->createView();
+        $response['queries']     = $request->query->all();
+        $response['limit']       = $request->get('limit');
 {% endblock method_body %}
 
 {% block method_return %}
 {% if 'annotation' == format %}
-        return array(
-            'pagination'    => $pagination,
-            'delete_form'   => $this->createDeleteForm()->createView(),
-            'search_form'   => $form->createView(),
-        );
+        return $response;
 {% else %}
-        return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:index.html.twig', array(
-            'pagination'    => $pagination,
-            'delete_form'   => $this->createDeleteForm()->createView(),
-            'search_form'   => $form->createView(),
-        ));
+        return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:index.html.twig', $response);
 {% endif %}
 {% endblock method_return %}
     }

@@ -1,40 +1,54 @@
 
     /**
 {% block phpdoc_method_header %}
-     * Deletes a {{ entity }} entity.
+     * Delete an existing resource.
 {% endblock phpdoc_method_header %}
      *
 {% block phpdoc_method_annotations %}
 {% if 'annotation' == format %}
-     * @Route("/{id}", name="{{ route_name_prefix }}_delete")
+     * @Route("/{id}", requirements={"id": "\d+"}, name="{{ route_name_prefix }}_delete")
      * @Method("DELETE")
-     * @Secure(roles="ROLE_{{ bundle | upper }}_{{ entity | upper }}_DELETE, ROLE_ADMIN")
+     * @Secure(roles="ROLE_{{ bundle | slice(0, -6) | upper }}_{{ entity | upper }}_DELETE, ROLE_ADMIN")
 {% endif %}
 {% endblock phpdoc_method_annotations %}
      *
      * @param Request $request
      * @param int $id
      * @return RedirectResponse
-{% include 'crud/actions/author.php.twig' %}
      */
 {% block method_definition %}
     public function deleteAction(Request $request, $id)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $handler = new {{ entity }}FormHandler(
-            $this->createDeleteForm(),
-            $request,
-            $this->get('doctrine')->getManager(),
-            $this->get('session')->getFlashBag()
-        );
-{% endblock method_body %}
+        try {
 
-{% block method_return %}
-        if ($handler->delete('{{ bundle }}:{{ entity }}')) {
+            $this->getManager()->deleteResource($id);
+
+            $response = $this->createResponseWhenResourceWasDeleted($id, $this->getAcceptResponse($request));
+
+            if ($response instanceof JsonResponse) {
+                return $response;
+            }
+
             return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
-        } else {
-            return $this->redirect($this->generateUrl('{{ route_name_prefix }}_show', array('id' => $id)));
+
+        } catch (\Exception $e) {
+
+            $response = $this->createResponseWhenResourceCannotBeDeleted($e, $this->getAcceptResponse($request));
+
+            if ($response instanceof JsonResponse) {
+                return $response;
+            }
+
+            if ($e instanceof NotFoundHttpException) {
+                return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
+            }
+
+            return $this->redirect($this->generateUrl('{{ route_name_prefix }}_show', array(
+                'id' => $id
+            )));
         }
-{% endblock method_return %}
+{% endblock method_body %}
+{% block method_return %}{% endblock method_return %}
     }

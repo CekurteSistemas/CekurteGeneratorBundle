@@ -1,53 +1,62 @@
 
     /**
 {% block phpdoc_method_header %}
-     * Finds and displays a {{ entity }} entity.
+     * Find and display a resource.
 {% endblock phpdoc_method_header %}
      *
 {% block phpdoc_method_annotations %}
 {% if 'annotation' == format %}
-     * @Route("/{id}", name="{{ route_name_prefix }}_show")
+     * @Route("/{id}", requirements={"id": "\d+"}, name="{{ route_name_prefix }}_show")
      * @Method("GET")
      * @Template()
-     * @Secure(roles="ROLE_{{ bundle | upper }}_{{ entity | upper }}_RETRIEVE, ROLE_ADMIN")
+     * @Secure(roles="ROLE_{{ bundle | slice(0, -6) | upper }}_{{ entity | upper }}_RETRIEVE, ROLE_ADMIN")
 {% endif %}
 {% endblock phpdoc_method_annotations %}
      *
+     * @param Request $request
      * @param int $id
-     * @return array|Response
-{% include 'crud/actions/author.php.twig' %}
+     * @return array|JsonResponse
      */
 {% block method_definition %}
-    public function showAction($id)
+    public function showAction(Request $request, $id)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $entity = $this->getEntityRepository()->find($id);
+        try {
 
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find {{ entity }} entity.');
+            $data = $this->getManager()->getResource($id);
+
+        } catch (NotFoundHttpException $e) {
+
+            $response = $this->createResponseWhenResourceCannotBeRetrived($e, $this->getAcceptResponse($request));
+
+            if ($response instanceof JsonResponse) {
+                return $response;
+            }
+
+            return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
+        }
+
+        $response = $this->createResponse($data, $this->getAcceptResponse($request));
+
+        if ($response instanceof JsonResponse) {
+            return $response;
+        }
+
+        if ($this->get('security.context')->isGranted('ROLE_SUPER_ADMIN')) {
+            $response['loggable'] = $this->getManager()->getResourceLoggable($data);
         }
 {% if 'delete' in actions %}
 
-        $deleteForm = $this->createDeleteForm($id);
+        $response['delete_form'] = $this->createDeleteForm()->createView();
 {% endif %}
 {% endblock method_body %}
 
 {% block method_return %}
 {% if 'annotation' == format %}
-        return array(
-            'entity'      => $entity,
-{% if 'delete' in actions %}
-            'delete_form' => $this->createDeleteForm()->createView(),
-{% endif %}
-        );
+        return $response;
 {% else %}
-        return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:show.html.twig', array(
-            'entity'      => $entity,
-{% if 'delete' in actions %}
-            'delete_form' => $this->createDeleteForm()->createView(),
-{%- endif %}
-        ));
+        return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:show.html.twig', $response);
 {% endif %}
 {% endblock method_return %}
     }

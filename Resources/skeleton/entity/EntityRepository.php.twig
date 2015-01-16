@@ -3,100 +3,32 @@
 namespace {{ namespace }}\Entity\Repository;
 
 {% block use_statements %}
-use Doctrine\ORM\EntityRepository;
-use {{ namespace }}\Entity\{{ entity_class }};
+use Cekurte\GeneratorBundle\Doctrine\FilteredQueryStringRepository;
+use Cekurte\GeneratorBundle\Doctrine\FilteredQueryString;
 {% endblock use_statements %}
 
 /**
  * {{ entity_class }} Repository.
  *
- * @author João Paulo Cercal <sistemas@cekurte.com>
- * @version 0.1
+ * @author Cekurte Generator <sistemas@cekurte.com>
+ * @see https://github.com/jpcercal/cekurtegeneratorbundle
+ * @version 2.0
  */
 {% block class_definition %}
-class {{ entity_class }}Repository extends EntityRepository
+class {{ entity_class }}Repository extends FilteredQueryStringRepository implements FilteredQueryString
 {% endblock class_definition %}
 {
 {% block class_body %}
     /**
-     * Search for records based on an entity
-     *
-     * @param {{ entity_class }} $entity
-     * @param string $sort
-     * @param string $direction
-     * @param array $additionalFields
-     * @return \Doctrine\ORM\Query
-{% include 'crud/actions/author.php.twig' %}
+     * @inheritdoc
      */
-    public function getQuery({{ entity_class }} $entity, $sort, $direction, $additionalFields = array())
+    public function getQueryStringFieldsWhiteList()
     {
-        $queryBuilder = $this->createQueryBuilder('ck');
-
-        $entityFields = array(
+        return array(
     {% for field in fields %}
-        {%- if field.type not in ['date', 'time', 'datetime', 'datetimetz'] %}
-        '{{ field.fieldName }}' => $entity->get{{ field.fieldName|first|upper }}{{ field.fieldName|slice(1) }}(),
-        {% endif -%}
+        'ck.{{ field.fieldName }}',
     {% endfor %}
-);
-
-        $data = array_merge($additionalFields, $entityFields);
-
-        {%- for field in fields %}
-
-            {{ "\n" }}
-            {%- if field.type in ['date', 'time', 'datetime', 'datetimetz'] %}
-        if (!empty($data['{{ field.fieldName }}From']) and !empty($data['{{ field.fieldName }}To'])) {
-            {%- else %}
-        if (!empty($data['{{ field.fieldName }}'])) {
-            {%- endif -%}
-            {{ "\n" }}
-            {% if field.type in ['date', 'time', 'datetime', 'datetimetz'] -%}
-            $queryBuilder
-                ->andWhere($queryBuilder->expr()->between(
-                    'ck.{{ field.fieldName }}',
-                    ':{{ field.fieldName }}From',
-                    ':{{ field.fieldName }}To'
-                ))
-                ->setParameter('{{ field.fieldName }}From', $data['{{ field.fieldName }}From'])
-                ->setParameter('{{ field.fieldName }}To', $data['{{ field.fieldName }}To'])
-            ;
-            {%- elseif field.type == 'text' -%}
-            $queryBuilder
-                ->andWhere($queryBuilder->expr()->like('ck.{{ field.fieldName }}', ':{{ field.fieldName }}'))
-                ->setParameter('{{ field.fieldName }}', "%{$data['{{ field.fieldName }}']}%")
-            ;
-            {%- elseif field.type == 'string' -%}
-
-                {%- if field.length <= 2 -%}
-            $queryBuilder
-                ->andWhere($queryBuilder->expr()->eq('ck.{{ field.fieldName }}', ':{{ field.fieldName }}'))
-                ->setParameter('{{ field.fieldName }}', $data['{{ field.fieldName }}'])
-            ;
-
-                {%- else -%}
-            $queryBuilder
-                ->andWhere($queryBuilder->expr()->like('ck.{{ field.fieldName }}', ':{{ field.fieldName }}'))
-                ->setParameter('{{ field.fieldName }}', "%{$data['{{ field.fieldName }}']}%")
-            ;
-
-                {%- endif %}
-            {% else -%}
-            $queryBuilder
-                ->andWhere($queryBuilder->expr()->eq('ck.{{ field.fieldName }}', ':{{ field.fieldName }}'))
-                ->setParameter('{{ field.fieldName }}', $data['{{ field.fieldName }}'])
-            ;
-
-            {%- endif %}
-
-        }
-        {%- endfor %}
-
-
-        return $queryBuilder
-            ->orderBy($sort, $direction)
-            ->getQuery()
-        ;
+    );
     }
 {% endblock class_body %}
 }

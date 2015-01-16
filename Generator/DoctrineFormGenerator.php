@@ -48,8 +48,8 @@ class DoctrineFormGenerator extends Generator
                 'suffix'    => 'FormType',
             ),
             'handler'       => array(
-                'path'      => 'Handler',
-                'suffix'    => 'FormHandler',
+                'path'      => 'Type',
+                'suffix'    => 'SearchFormType',
             ),
         );
 

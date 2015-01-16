@@ -19,12 +19,14 @@
                             {% block actions %}
                                 {% block action_close %}
                                     {% block action_close_open %}<button type="reset" class="btn btn-default" data-dismiss="modal">{% endblock %}
+                                        {% block action_close_icon %}<span class="glyphicon glyphicon-remove"></span> {% endblock %}
                                         {% block action_close_label %}{{ 'Close' | trans }}{% endblock %}
                                     {% block action_close_close %}</button>{% endblock %}
                                 {% endblock %}
                                 {% block action_submit %}
-                                    {% block action_submit_open %}<button type="submit" class="btn btn-primary">{% endblock %}
-                                        {% block action_submit_label %}{{ 'Search' | trans }}{% endblock %}
+                                    {% block action_submit_open %}<button type="submit" class="btn btn-success">{% endblock %}
+                                    {% block action_submit_icon %}<span class="glyphicon glyphicon-ok"></span> {% endblock %}
+                                    {% block action_submit_label %}{{ 'Search' | trans }}{% endblock %}
                                     {% block action_submit_close %}</button>{% endblock %}
                                 {% endblock %}
                             {% endblock %}

@@ -7,8 +7,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 {% endblock use_statements %}
 
+{%- set hasDateField = false %}
+
 /**
- * {{ entity_class }} type.
+ * {{ entity_class }} search type.
  *
  * @author Cekurte Generator <sistemas@cekurte.com>
  * @see https://github.com/jpcercal/cekurtegeneratorbundle
@@ -27,19 +29,25 @@ class {{ form_class }} extends AbstractType
         $builder
         {%- for field in fields %}
 
-            {% if field.type == 'text' -%}
-            ->add('{{ field.fieldName }}', 'ck_editor')
-            {%- elseif field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] -%}
-            ->add('{{ field.fieldName }}', 'hidden', array(
-                'attr'  => array(
-                    'class' => '{{ entity_class|lower }}_{{ field.fieldName }}'
-                )
-            ))
+            {% if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] -%}
+
             {%- elseif field.type in ['date'] -%}
-            {%- set hasDateField = true -%}
-            ->add('{{ field.fieldName }}', 'ck_date')
+            ->add('{{ field.fieldName }}Start', 'ck_search_date', array(
+                'alias'     => 'ck',
+                'property'  => '{{ field.fieldName }}',
+                'operation' => 'gte',
+            ))
+            ->add('{{ field.fieldName }}End', 'ck_search_date', array(
+                'alias'     => 'ck',
+                'property'  => '{{ field.fieldName }}',
+                'operation' => 'lte',
+            ))
             {%- else -%}
-            ->add('{{ field.fieldName }}')
+            ->add('{{ field.fieldName }}', 'ck_search_text', array(
+                'alias'     => 'ck',
+                'property'  => '{{ field.fieldName }}',
+                'operation' => 'eq',
+            ))
             {%- endif %}
 
         {%- endfor %}
@@ -52,7 +60,7 @@ class {{ form_class }} extends AbstractType
      */
     public function getParent()
     {
-        return 'ck_crud';
+        return 'ck_search';
     }
 
     /**

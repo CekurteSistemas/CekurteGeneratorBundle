@@ -1,77 +1,75 @@
 
     /**
 {% block phpdoc_method_header %}
-     * Edits an existing {{ entity }} entity.
+     * Edit an existing resource.
 {% endblock phpdoc_method_header %}
      *
 {% block phpdoc_method_annotations %}
 {% if 'annotation' == format %}
-     * @Route("/{id}", name="{{ route_name_prefix }}_update")
+     * @Route("/{id}", requirements={"id": "\d+"}, name="{{ route_name_prefix }}_update")
      * @Method("PUT")
      * @Template("{{ bundle }}:{{ entity }}:edit.html.twig")
-     * @Secure(roles="ROLE_{{ bundle | upper }}_{{ entity | upper }}_UPDATE, ROLE_ADMIN")
+     * @Secure(roles="ROLE_{{ bundle | slice(0, -6) | upper }}_{{ entity | upper }}_UPDATE, ROLE_ADMIN")
 {% endif %}
 {% endblock phpdoc_method_annotations %}
      *
      * @param Request $request
      * @param int $id
-     * @return array|Response
-{% include 'crud/actions/author.php.twig' %}
+     * @return array|JsonResponse
      */
 {% block method_definition %}
     public function updateAction(Request $request, $id)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $entity = $this->getEntityRepository()->find($id);
+        try {
 
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find {{ entity }} entity.');
+            $data = $this->getManager()->getResource($id);
+
+            $editForm = $this->createForm(new {{ entity }}FormType(), $data, array(
+                'method' => 'PUT'
+            ));
+
+            if (!$editForm->handleRequest($request)->isValid()) {
+
+                $optionalData = array(
+                    'data'        => $data,
+                    'delete_form' => $this->createDeleteForm()->createView(),
+                );
+
+                return $this->createResponseWhenFormIsInvalid($editForm, $this->getAcceptResponse($request), $optionalData, 'edit_form');
+            }
+
+            $result = $this->getManager()->updateResource($editForm->getData());
+
+            $response = $this->createResponseWhenResourceWasUpdated($result->getId(), $this->getAcceptResponse($request));
+
+            if ($response instanceof JsonResponse) {
+                return $response;
+            }
+
+            return $this->redirect($this->generateUrl('{{ route_name_prefix }}_show', array(
+                'id' => $result->getId()
+            )));
+
+        } catch (\Exception $e) {
+
+            $response = $this->createResponseWhenResourceCannotBeUpdated($e, $this->getAcceptResponse($request));
+
+            if ($response instanceof JsonResponse) {
+                return $response;
+            }
+
+            if ($e instanceof NotFoundHttpException) {
+                return $this->redirect($this->generateUrl('{{ route_name_prefix }}'));
+            }
+
+            return array(
+                'data'        => $data,
+                'edit_form'   => $editForm->createView(),
+                'delete_form' => $this->createDeleteForm()->createView(),
+            );
         }
-
-        $form = $this->createForm(new {{ entity }}FormType(), $entity);
-
-        $handler = new {{ entity }}FormHandler(
-            $form,
-            $request,
-            $this->get('doctrine')->getManager(),
-            $this->get('session')->getFlashBag()
-        );
-
-        if ($id = $handler->save()) {
-            return $this->redirect($this->generateUrl('{{ route_name_prefix }}_show', array('id' => $id)));
-        }
-
-        $editForm = $this->createForm(new {{ entity }}FormType(), $entity);
 {% endblock method_body %}
-
-{% block method_return %}
-{% if 'annotation' == format %}
-        return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $this->createDeleteForm()->createView(),
-            {%- for field in fields %}
-                {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
-
-            '{{ entity|lower ~ "_" ~ field.fieldName }}' => $editForm->get('{{ entity|lower ~ "_" ~ field.fieldName }}')->getData(),
-
-                {%- endif %}
-            {% endfor %}
-        );
-{% else %}
-        return $this->render('{{ bundle }}:{{ entity|replace({'\\': '/'}) }}:edit.html.twig', array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $this->createDeleteForm()->createView(),
-            {%- for field in fields %}
-                {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
-
-            '{{ entity|lower ~ "_" ~ field.fieldName }}' => $editForm->get('{{ entity|lower ~ "_" ~ field.fieldName }}')->getData(),
-
-                {%- endif %}
-            {% endfor %}
-        ));
-{% endif %}
-{% endblock method_return %}
+{% block method_return %}{% endblock method_return %}
     }

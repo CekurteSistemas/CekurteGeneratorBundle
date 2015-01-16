@@ -40,6 +40,8 @@ EOT
     );
     }
 
+    // todo: Sensio\Bundle\GeneratorBundle\Command\GenerateDoctrineEntityCommand (interact method)
+
    protected function getSkeletonDirs(BundleInterface $bundle = null)
     {
         return array(

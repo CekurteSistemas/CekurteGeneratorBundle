@@ -2,6 +2,7 @@
 
 namespace Cekurte\GeneratorBundle\Office;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use \PHPExcel as PHPOfficeExcel;
 use \PHPExcel_IOFactory;
@@ -11,10 +12,10 @@ use \PHPExcel_Style_Fill;
 use \PHPExcel_Style_Alignment;
 
 /**
- * Cria relatórios utilizando a biblioteca PHPExcel
+ * Build custom reports with library PHPExcel
  *
  * @author João Paulo Cercal <sistemas@cekurte.com>
- * @version 0.1
+ * @version 2.0
  */
 class PHPExcel
 {
@@ -36,10 +37,10 @@ class PHPExcel
     protected $header;
 
     /**
-     * Start
+     * Constructor.
      *
-     * @param string $headerTitle título do documento
-     * @param string $activeSheetTitle título da planilha (aba)
+     * @param string $headerTitle title of the document
+     * @param string $activeSheetTitle title of the sheet
      */
     public function __construct($headerTitle, $activeSheetTitle = null)
     {
@@ -62,9 +63,9 @@ class PHPExcel
     }
 
     /**
-     * Cria um objeto Response
+     * Create a Response.
      *
-     * @param  string $writer
+     * @param string $writer
      * @return StreamedResponse
      */
     public function createResponse($writer = 'Excel5')
@@ -83,7 +84,50 @@ class PHPExcel
     }
 
     /**
-     * Build
+     * Create a JSON Response.
+     *
+     * @param string $writer
+     * @return JsonResponse
+     */
+    public function createJsonResponse($writer = 'Excel5')
+    {
+        $objWriter = PHPExcel_IOFactory::createWriter($this->getPhpExcel(), $writer);
+
+        try {
+
+            $webDirectory = realpath(dirname(__FILE__) . '/../../../../../../web/');
+
+            $folderName = 'reports';
+
+            if (!is_dir($reportsDirectory = $webDirectory . DIRECTORY_SEPARATOR . $folderName)) {
+                mkdir($reportsDirectory);
+            }
+
+            $filename = date('YmdHis') . md5(microtime(true)) . '.xls';
+
+            $objWriter->save($reportsDirectory . DIRECTORY_SEPARATOR . $filename);
+
+            return new JsonResponse(array(
+                'message' => 'The report has been created with successfully',
+                'data'    => array(
+                    'file' => array(
+                        'path' => $folderName,
+                        'name' => $filename,
+                        'size' => filesize($folderName . DIRECTORY_SEPARATOR . $filename),
+                        'content-type' => 'text/vnd.ms-excel'
+                    )
+                ),
+            ));
+
+        } catch (\PHPExcel_Writer_Exception $e) {
+            return JsonResponse(array(
+                'message' => $e->getMessage(),
+            ), 500);
+        }
+    }
+
+    /**
+     * Build the sheet.
      *
      * @return void
      */
@@ -105,8 +149,7 @@ class PHPExcel
             $activeSheet->getColumnDimension($lastColumnName)->setAutoSize(true);
         }
 
-        // ------------------------------------------------------------------------------
-        // Titles
+        // Setup Titles
 
         $activeSheet->mergeCells(sprintf('A1:%s1', $lastColumnName));
         $activeSheet->mergeCells(sprintf('A2:%s2', $lastColumnName));
@@ -123,8 +166,7 @@ class PHPExcel
 
         $activeSheet->setCellValue('A2', sprintf('%s %s às %s', 'Exportado em', date('d/m/Y'), date('H:i:s')));
 
-        // ------------------------------------------------------------------------------
-        // Header
+        // Setup Header
 
         $columnNumber = 0;
 
@@ -133,8 +175,7 @@ class PHPExcel
             $activeSheet->setCellValueByColumnAndRow($columnNumber++, 3, $value);
         }
 
-        // ------------------------------------------------------------------------------
-        // Registros
+        // Setup resources
 
         foreach ($data as $lineNumber => $row) {
 
@@ -158,7 +199,7 @@ class PHPExcel
     }
 
     /**
-     * Altura das células
+     * Get row height.
      *
      * @return int
      */
@@ -168,7 +209,7 @@ class PHPExcel
     }
 
     /**
-     * Gets the value of phpExcel.
+     * Get the PHPExcel instance.
      *
      * @return PHPOfficeExcel
      */
@@ -236,7 +277,7 @@ class PHPExcel
     }
 
     /**
-     * Template
+     * Get a custom Style.
      *
      * @param string $name o nome do template
      *

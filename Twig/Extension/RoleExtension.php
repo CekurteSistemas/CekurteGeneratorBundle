@@ -99,7 +99,6 @@ class RoleExtension extends ContainerAwareTwigExtension
             . self::ROLE_PREFIX
             . self::ROLE_SEPARATOR
             . str_replace('\\', '', strtoupper($this->getBundleName()))
-            . 'BUNDLE'
             . self::ROLE_SEPARATOR
             . strtoupper($this->getControllerName())
             . $specificRoleSuffix

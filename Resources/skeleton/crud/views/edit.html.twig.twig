@@ -1,5 +1,5 @@
 {% block extends %}
-{{ "{% extends 'CekurteGeneratorBundle::layout.html.twig' %}" }}
+{{ "{% extends '" ~ bundle ~ ":" ~ entity ~ ":layout.html.twig' %}" }}
 {% endblock extends %}
 
 {% block body %}
@@ -18,7 +18,7 @@
     {{ "{% embed 'CekurteGeneratorBundle:Action:delete.html.twig' with {
         'route'             : '" ~ route_name_prefix ~ "_delete',
         'identifierKey'     : 'id',
-        'identifierValue'   : entity.id,
+        'identifierValue'   : data.id,
         'form'              : delete_form,
         'show_label'        : true
     } only %}
@@ -26,23 +26,27 @@
 {{ "{% endblock %}" }}
 
 {{ "{% block content -%}" }}
-    <form class="form-horizontal" role="form" action="{{ "{{ path('" ~ route_name_prefix ~ "_update', { 'id': entity.id }) }}" }}" method="post" {{ "{{ form_enctype(edit_form) }}" }}>
-        <input type="hidden" name="_method" value="PUT" />
-        {{ "{{ form_widget(edit_form) }}" }}
-        {{ "{% include 'CekurteGeneratorBundle:Action:form-actions.html.twig' %}" }}
-    </form>
-    {%- for field in fields %}
-        {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
+    <div class="panel panel-default">
+        <div class="panel-heading">{{ "{{ 'Edit an existing resource'|trans }}" }}</div>
+        <div class="panel-body">
+            <form class="form-horizontal" role="form" action="{{ "{{ path('" ~ route_name_prefix ~ "_update', { 'id': data.id }) }}" }}" method="post" {{ "{{ form_enctype(edit_form) }}" }}>
+                <input type="hidden" name="_method" value="PUT" />
+                {{ "{{ form_widget(edit_form) }}" }}
+                {{ "{% include 'CekurteGeneratorBundle:Action:form-actions.html.twig' %}" }}
+            </form>
+            {%- for field in fields %}
+                {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] %}
 
-    {{ "{% include 'CekurteUploaderBundle:TwitterBootstrap3:layout.html.twig' with {
-        'endpoint': '" ~ entity|lower ~ "_" ~ field.fieldName ~ "',
-        'label'   : '" ~ field.fieldName|capitalize ~ "'|trans,
-        'image'   : " ~ entity|lower ~ "_" ~ field.fieldName ~ "
-    } %}" }}
+            {{ "{% include 'CekurteUploaderBundle:TwitterBootstrap3:layout.html.twig' with {
+                'endpoint': '" ~ data|lower ~ "_" ~ field.fieldName ~ "',
+                'label'   : '" ~ field.fieldName|capitalize ~ "'|trans,
+                'image'   : " ~ data|lower ~ "_" ~ field.fieldName ~ "
+            } %}" }}
 
-        {%- endif %}
-    {%- endfor %}
-
+                {%- endif %}
+            {%- endfor %}
+        </div>
+    </div>
 {{ "{% endblock %}" }}
 
 {%- set hasDateField    = false -%}
@@ -80,7 +84,7 @@
             {%- if field.fieldName in ['picture', 'image', 'thumb', 'thumbnail', 'file', 'filename'] -%}
     {{ "\n" }}
     {{ "{%- include 'CekurteUploaderBundle:TwitterBootstrap3:script.html.twig' with {
-        'endpoint': '" ~ entity|lower ~ "_" ~ field.fieldName ~ "'
+        'endpoint': '" ~ data|lower ~ "_" ~ field.fieldName ~ "'
     } -%}" }}
             {%- endif -%}
         {% endfor -%}

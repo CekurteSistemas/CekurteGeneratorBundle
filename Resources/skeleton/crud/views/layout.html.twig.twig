@@ -1,0 +1,11 @@
+{% block extends %}
+{{ "{% extends 'CekurteGeneratorBundle::layout.html.twig' %}" }}
+{% endblock extends %}
+
+{% block body %}
+{{ "{% block menu %}" }}
+    {{ "{% set menu_active = '" ~ route_name_prefix ~ "' %}" }}
+    {{ "{{ parent() }}" }}
+{{ "{% endblock %}" }}
+{{ "\n" }}
+{%- endblock body %}

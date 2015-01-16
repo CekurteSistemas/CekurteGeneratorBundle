@@ -1,65 +1,32 @@
 
     /**
 {% block phpdoc_method_header %}
-     * Export {{ entity }} entities to Excel.
+     * Export all resources.
 {% endblock phpdoc_method_header %}
      *
 {% block phpdoc_method_annotations %}
 {% if 'annotation' == format %}
-     * @Route("/export/sort/{sort}/direction/{direction}/", defaults={"sort"="ck.id", "direction"="asc"}, name="{{ route_name_prefix }}_export")
+     * @Route("/export/{output}", defaults={"output"="xls"}, requirements={"output": "xls"}, name="{{ route_name_prefix }}_export")
      * @Method("GET")
-     * @Template()
-     * @Secure(roles="ROLE_{{ bundle | upper }}_{{ entity | upper }}, ROLE_ADMIN")
+     * @Secure(roles="ROLE_{{ bundle | slice(0, -6) | upper }}_{{ entity | upper }}, ROLE_ADMIN")
 {% endif %}
 {% endblock phpdoc_method_annotations %}
      *
-     * @param string $sort
-     * @param string $direction
-     * @return StreamedResponse
-{% include 'crud/actions/author.php.twig' %}
+     * @param Request $request
+     * @return StreamedResponse|JsonResponse
      */
 {% block method_definition %}
-    public function exportAction($sort, $direction)
+    public function exportAction(Request $request, $output)
 {% endblock method_definition %}
     {
 {% block method_body %}
-        $form = $this->createForm(new {{ entity }}FormType(), new {{ entity }}(), array(
-            'search' => true,
-        ));
+        $queryBuilder = $this->getManager()->findResourcesByQueryString($request->query->all());
 
-        if ($this->get('session')->has('search_{{ entity | lower }}')) {
+        $data = $this->getManager()->getResources($queryBuilder, true);
 
-            $form->bind($this->get('session')->get('search_{{ entity | lower }}'));
-        }
-
-{%- set hasDateField = false -%}
-
-{%- for field in fields -%}
-    {%- if field.type in ['date'] -%}
-        {%- set hasDateField = true -%}
-    {%- endif -%}
-{%- endfor -%}
-
-{%- if hasDateField == false -%}
-        {{ "\n" }}
-        $query = $this->getEntityRepository()->getQuery($form->getData(), $sort, $direction);
-{%- else -%}
-        {{ "\n" }}
-        $query = $this->getEntityRepository()->getQuery($form->getData(), $sort, $direction, array(
-        {%- for field in fields -%}
-            {%- if field.type in ['date'] -%}
-                {% if not loop.first %}{{ "\n" }}{% endif %}
-            '{{ field.fieldName }}From' => $form->get('{{ field.fieldName }}From')->getData(),
-            '{{ field.fieldName }}To'   => $form->get('{{ field.fieldName }}To')->getData(),
-            {%- endif -%}
-        {%- endfor %}
-
-        ));
-{%- endif -%}
-        {{ "\n" }}
         $translator = $this->get('translator');
 
-        $office = new CekurtePHPExcel(sprintf(
+        $office = new PHPExcel(sprintf(
             '%s %s',
             $translator->trans('Report of'),
             $translator->trans('{{ entity }}')
@@ -70,13 +37,16 @@
             {% for field in fields %}
     '{{ field.fieldName }}' => $translator->trans('{{ field.fieldName|capitalize }}'),
             {% endfor -%}
-        ))
-            ->setData($query->getArrayResult())
+            ))
+            ->setData($data['items'])
             ->build()
         ;
 {% endblock method_body %}
 
 {% block method_return %}
-        return $office->createResponse();
+        return $this->getAcceptResponse($request) === 'html'
+            ? $office->createResponse()
+            : $office->createJsonResponse()
+        ;
 {% endblock method_return %}
     }

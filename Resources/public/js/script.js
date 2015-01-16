@@ -21,6 +21,18 @@ jQuery(document).ready(function($) {
     });
 
     /**
+     * Button log details
+     */
+
+    $('button#btn-log-details').on('click', function(event) {
+
+        event.preventDefault();
+
+        $(this).find('.btn-log-details').toggleClass('hide');
+        $(this).parent().parent().find('.log').toggleClass('hide');
+    });
+
+    /**
      * --------------------------------------------------------------------------
      * Habilita o Tooltip do Twitter Bootstrap
      */

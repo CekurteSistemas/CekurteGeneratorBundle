@@ -70,6 +70,7 @@ class PaginationExtension extends \Twig_Extension
             'cekurte_pagination_sort_direction' => new \Twig_Function_Method($this, 'getColumnSortedDirection'),
             'cekurte_pagination_render'         => new \Twig_Function_Method($this, 'renderPaginationTemplate'),
             'cekurte_pagination_sortable'       => new \Twig_Function_Method($this, 'renderPaginationSortable'),
+            'cekurte_pagination_query_string'   => new \Twig_Function_Method($this, 'buildPaginationRouteQueryString'),
         );
     }
 
@@ -158,6 +159,23 @@ class PaginationExtension extends \Twig_Extension
             'field'                         => $field,
             'label'                         => is_null($label) ? $field : $label,
         ));
+    }
+
+    /**
+     * Build pagination route query string.
+     *
+     * @param array $queryString
+     * @return string
+     */
+    public function buildPaginationRouteQueryString(array $queryString)
+    {
+        $data = '?';
+
+        foreach ($queryString as $key => $value) {
+            $data .= $key . '=' . $value . '&';
+        }
+
+        return substr($data, 0, -1);
     }
 
     /**

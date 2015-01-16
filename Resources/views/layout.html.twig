@@ -18,6 +18,7 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.min.css') }}" />
         <link rel="stylesheet" type="text/css" href="{{ asset('vendor/select2/select2.css') }}" />
         <link rel="stylesheet" type="text/css" href="{{ asset('vendor/select2/select2-bootstrap.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('vendor/bootstrap-datepicker/css/datepicker3.css') }}" />
         <link rel="stylesheet" type="text/css" href="{{ asset('bundles/cekurtegenerator/css/style.min.css') }}" />
     {%- endblock -%}
 
@@ -117,7 +118,12 @@
                             {%- for flashMessage in app.session.flashbag.get('message') -%}
                                 {%- block container_alert_open_tag -%}<div class="alert alert-{%- if flashMessage.type == 'error' -%}danger{%- else -%}{{ flashMessage.type }}{%- endif %} fade in">{%- endblock -%}
                                     {%- block container_alert_button_close -%}<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>{%- endblock -%}
-                                    {%- block container_alert_message -%}<strong>{{ flashMessage.type | trans | capitalize }}!</strong> {{ flashMessage.message | trans }}{%- endblock -%}
+                                    {%- block container_alert_message -%}<strong>{{ flashMessage.type | trans | capitalize }}!</strong> {{ flashMessage.message | trans }}{{ flashMessage.message|slice(-1) not in ['.', '!', '?'] ? '.' : '' }}{%- endblock -%}
+                                    {%- if flashMessage.exception is defined -%}
+                                        {%- block container_alert_message_exception -%}
+                                            <p><em>{{ flashMessage.exception.class }}: {{ flashMessage.exception.message }}</em></p>
+                                        {%- endblock -%}
+                                    {%- endif -%}
                                 {%- block container_alert_close_tag -%}</div>{%- endblock -%}
                             {%- endfor -%}
                         {%- endblock -%}
@@ -135,7 +141,7 @@
                 {%- block footer -%}
                     {%- block footer_content_open_tag -%}<div class="pull-left">{%- endblock -%}
                         {%- block footer_content -%}
-                            <a href="http://sistemas.cekurte.com/" target="_blank">@CekurteSistemas 2014</a>
+                            <a href="http://sistemas.cekurte.com/" target="_blank">@CekurteSistemas</a>
                         {%- endblock -%}
                     {%- block footer_content_close_tag -%}</div>{%- endblock -%}
                 {%- endblock -%}
@@ -149,11 +155,13 @@
     {%- block javascripts -%}
         <script type="text/javascript" src="{{ asset('vendor/jquery/dist/jquery.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('vendor/bootstrap-datepicker/js/bootstrap-datepicker.js') }}"></script>
         <script type="text/javascript" src="{{ asset('vendor/select2/select2.min.js') }}"></script>
         {%- if app.request.locale != 'en_US' -%}
+        <script type="text/javascript" src="{{ asset('vendor/bootstrap-datepicker/js/locales/bootstrap-datepicker.' ~ app.request.locale|replace({'_': '-'}) ~ '.js') }}"></script>
         <script type="text/javascript" src="{{ asset('vendor/select2/select2_locale_' ~ app.request.locale|replace({'_': '-'}) ~ '.js') }}"></script>
         {%- endif -%}
-        <script type="text/javascript" src="{{ asset('vendor/jquery-placeholder/jquery.placeholder.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('vendor/jquery-placeholder/jquery.placeholder.js') }}"></script>
         <script type="text/javascript" src="{{ asset('bundles/cekurtegenerator/js/script.min.js') }}"></script>
     {%- endblock -%}
 

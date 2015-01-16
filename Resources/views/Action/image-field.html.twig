@@ -1,0 +1,9 @@
+{% block container %}
+    {% block container_open %}{% endblock %}
+        {% block field %}
+            {% if image|length > 0 %}
+                <img class="{{ class is defined ? class : 'img-thumbnail' }}" alt="{{ label is defined ? label : image }}" title="{{ label is defined ? label : image }}" src="{{ image|imagine_filter(filter is defined ? filter : 'admin_thumbnail_list') }}" />
+            {% endif %}
+        {% endblock %}
+    {% block container_close %}{% endblock %}
+{% endblock %}

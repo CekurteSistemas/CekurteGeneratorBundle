@@ -53,3 +53,11 @@
         {% endif %}
     {% endspaceless %}
 {% endblock form_label %}
+
+{% block ck_search_text_widget -%}
+    {%- set attr = attr|merge({
+        'data-field': alias ~ separator|default('.') ~ property,
+        'data-operation': operation,
+    }) -%}
+    {{- block('form_widget_simple') -}}
+{%- endblock ck_search_text_widget %}
