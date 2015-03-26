@@ -1,9 +1,0 @@
-{% if cekurte_is_granted('LIST') %}
-    {% block container_open %}{% endblock %}
-        {% block action %}
-            {% block action_open %}<a href="#modalSearch" class="btn btn-default" data-toggle="modal">{% endblock %}
-                {% block action_icon %}<span class="glyphicon glyphicon-search"></span>{% endblock %} {% block action_label %}{{ 'Search' | trans }}{% endblock %}
-            {% block action_close %}</a>{% endblock %}
-        {% endblock %}
-    {% block container_close %}{% endblock %}
-{% endif %}

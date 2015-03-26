@@ -1,7 +1,0 @@
-{% block container %}
-    {% block container_open %}{% endblock %}
-        {% block field %}
-            <span class="{{ class is defined ? class : 'badge' }}" style="background-color: {{ hexcolor }};">{{ label is defined ? label : hexcolor }}</span>
-        {% endblock %}
-    {% block container_close %}{% endblock %}
-{% endblock %}

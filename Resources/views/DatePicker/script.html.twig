@@ -1,5 +1,0 @@
-<script type="text/javascript" src="{{ asset('vendor/bootstrap-datepicker/js/bootstrap-datepicker.js') }}"></script>
-
-{%- if app.request.locale != 'en_US' -%}
-    <script type="text/javascript" src="{{ asset('vendor/bootstrap-datepicker/js/locales/bootstrap-datepicker.' ~ app.request.locale|replace({'_': '-'}) ~ '.js') }}"></script>
-{%- endif -%}

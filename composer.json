@@ -1,25 +1,27 @@
 {
     "name": "cekurte/generatorbundle",
     "description": "This bundle generates code for you",
-    "keywords": ["generator"],
+    "keywords": ["generator","crud","database","symfony"],
+    "homepage": "https://github.com/jpcercal/cekurtegeneratorbundle",
     "type": "symfony-bundle",
+    "license": "MIT",
     "authors": [
         {
             "name": "João Paulo Cercal",
-            "email": "sistemas@cekurte.com",
+            "email": "jpcercal@gmail.com",
             "homepage": "http://sistemas.cekurte.com/"
         }
     ],
     "require": {
-        "phpoffice/phpexcel": "1.7.9"
+        "cekurte/componentbundle": "~2.0",
+        "sensio/generator-bundle": "~2.3"
     },
     "autoload": {
-        "psr-0": { "Cekurte\\GeneratorBundle": "" }
+        "psr-4": {"Cekurte\\GeneratorBundle\\": ""}
     },
-    "target-dir": "Cekurte/GeneratorBundle",
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1.x-dev"
+            "dev-master": "2.0.x-dev"
         }
     }
 }
